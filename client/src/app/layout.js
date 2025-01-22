@@ -27,7 +27,7 @@ export const metadata = {
 
   authors: [
     { name: "Sandip Katel" },
-    { name: "Sandp Katel", url: "https://iiec.vercel.app" },
+    { name: "Sandp Katel", url: "https://iiec-website.vercel.app" },
   ],
   creator: "Sandip Katel",
   publisher: "Kamal Darlame",
