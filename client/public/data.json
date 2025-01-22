@@ -42,8 +42,8 @@
             "Title": "ECE",
             "Keyword": "ece",
             "Description": "4 yrs B. Tech programme in Electronics & Communication Engineering. HOD: Dr. Abhijit Banerjee.",
-            "PageLink": "/academics/departments/ece",
-            "BannerPic": "/images/Department-of-Electronics-Communication-Engineering-Image.jpg",
+            "PageLink": "/",
+            "BannerPic": "/",
             "PageRouteData": {
                 "DepartmentName": "Department of Electronics & Communication Engineering",
                 "YearofEstablishment": "July 2003",
@@ -56,8 +56,8 @@
             "Title": "CSE",
             "Keyword": "cse",
             "Description": "4 yrs B.Tech programme in Computer Science & Engineering. HOD: Prof. Prosenjit Das",
-            "PageLink": "/academics/departments/cse",
-            "BannerPic": "/images/collegepic(6).jpg",
+            "PageLink": "/",
+            "BannerPic": "/",
             "PageRouteData": {
                 "DepartmentName": "Department of Computer Science & Engineering",
                 "YearofEstablishment": "July 2003",
@@ -70,8 +70,8 @@
             "Title": "CSBS",
             "Keyword": "csbs",
             "Description": "4 yrs B.Tech programme in Computer Science & Business Systems. HOD: Prof. Suman Bhattacharyya",
-            "PageLink": "/academics/departments/csbs",
-            "BannerPic": "/images/collegepic(2).jpg",
+            "PageLink": "/",
+            "BannerPic": "/",
             "PageRouteData": {
                 "DepartmentName": "Department of Computer Science & Business Systems",
                 "YearofEstablishment": "July 2020",
@@ -84,8 +84,8 @@
             "Title": "EE",
             "Keyword": "ee",
             "Description": "4 yrs. B. Tech. programme in Electrical Engineering. HOD: Prof. Sandip Saha Chowdhury",
-            "PageLink": "/academics/departments/ee",
-            "BannerPic": "/images/collegepic(3).jpg",
+            "PageLink": "/",
+            "BannerPic": "/",
             "PageRouteData": {
                 "DepartmentName": "Department of Electrical Engineering",
                 "YearofEstablishment": "July 2003",
@@ -98,8 +98,8 @@
             "Title": "EEE",
             "Keyword": "eee",
             "Description": "4 yrs B.Tech. programme in Electrical & Electronics Engineering. HOD : Prof. Hiranmoy Mondal",
-            "PageLink": "/academics/departments/eee",
-            "BannerPic": "/images/collegepic(4).jpg",
+            "PageLink": "/",
+            "BannerPic": "/",
             "PageRouteData": {
                 "DepartmentName": "Department of Electrical & Electronics Engineering",
                 "YearofEstablishment": "July 2020",
@@ -112,8 +112,8 @@
             "Title": "ME",
             "Keyword": "me",
             "Description": "4 yrs B.Tech. programme in Mechanical Engineering. HOD: Prof. Niloy Ghosh",
-            "PageLink": "/academics/departments/me",
-            "BannerPic": "/images/Department-of-Mechanical-Engineering-Image.jpg",
+            "PageLink": "/",
+            "BannerPic": "/",
             "PageRouteData": {
                 "DepartmentName": "Department of Mechanical Engineering",
                 "YearofEstablishment": "July 2009",
@@ -128,25 +128,25 @@
             "Title": "The Techfest at the Academy of Technology",
             "Description": "The Techfest at the Academy of Technology is an annual event that showcases innovation and creativity in various fields of technology. It features a range of activities including workshops, competitions, exhibitions, and lectures from industry experts. Students have the opportunity to display their projects, engage in hands-on learning, and network with professionals. This event aims to inspire and cultivate a passion for technology among attendees, fostering an environment of learning and collaboration.",
             "PageLink": "/",
-            "BannerPic": "/images/collegepic(1).jpg"
+            "BannerPic": "/"
         },
         {
             "Title": "Gamesmeet at the Academy of Technology",
             "Description": "Gamesmeet at the Academy of Technology is an annual gathering focused on gaming and e-sports. It features competitive gaming tournaments, casual gaming sessions, and interactive workshops. Participants can compete in popular games, learn about game development, and connect with fellow gaming enthusiasts. The event aims to promote the gaming culture within the academy, encouraging both fun and educational experiences in the world of video games.",
             "PageLink": "/",
-            "BannerPic": "/images/collegepic(2).jpg"
+            "BannerPic": "/"
         },
         {
             "Title": "The 'Women in Space Engineering' event at the Academy of Technology",
             "Description": "The 'Women in Space Engineering' event at the Academy of Technology is a prestigious gathering that highlights the contributions of women in the field of space engineering. Esteemed IIT professors and renowned female scientists from ISRO come together to share their experiences, insights, and advancements in space technology. The event includes inspiring talks, panel discussions, and networking opportunities, aiming to encourage and empower female students to pursue careers in space engineering and related fields.",
             "PageLink": "/",
-            "BannerPic": "/images/collegepic(3).jpg"
+            "BannerPic": "/"
         },
         {
             "Title": "The GDG September Meet at the Academy of Technology",
             "Description": "The GDG September Meet at the Academy of Technology is a monthly gathering hosted by the Google Developer Group. It features tech talks, coding sessions, and networking opportunities for developers to share knowledge and collaborate on projects.",
             "PageLink": "/",
-            "BannerPic": "/images/collegepic(4).jpg"
+            "BannerPic": "/"
         }
     ],
     "EventsData": [
@@ -154,25 +154,25 @@
             "Title": "asd",
             "Description": "This is Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
             "PageLink": "/",
-            "BannerPic": "/images/collegepic(1).jpg"
+            "BannerPic": "/"
         },
         {
             "Title": "ddd",
             "Description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
             "PageLink": "/",
-            "BannerPic": "/images/collegepic(2).jpg"
+            "BannerPic": "/"
         },
         {
             "Title": "wee",
             "Description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
             "PageLink": "/",
-            "BannerPic": "/images/collegepic(3).jpg"
+            "BannerPic": "/"
         },
         {
             "Title": "xzc",
             "Description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
             "PageLink": "/",
-            "BannerPic": "/images/collegepic(4).jpg"
+            "BannerPic": "/"
         }
     ],
     "CarrierAtAotData": [
@@ -195,17 +195,17 @@
         {
             "Title": "Recruitment advertisement December 2023",
             "PostLocation": "Published in Anandabazar Patrika & Telegraph on 12.12.23",
-            "Link": "/files/Add_12_12_23.pdf"
+            "Link": "/"
         },
         {
             "Title": "Recruitment advertisement 2023",
             "PostLocation": "Published in Anandabazar Patrika & Telegraph on 12.12.23",
-            "Link": "https://aot.edu.in/wp-content/uploads/2023/12/Add_12_12_23.pdf"
+            "Link": "/"
         },
         {
             "Title": "Recruitment advertisement 2023",
             "PostLocation": "Published in Anandabazar Patrika & Telegraph on 12.12.23",
-            "Link": "https://aot.edu.in/wp-content/uploads/2023/12/Add_12_12_23.pdf"
+            "Link": "/"
         }
     ],
     "contact": [

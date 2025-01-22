@@ -13,15 +13,15 @@ function NavLinks() {
     },
     {
       title: "Programs & Events",
-      path: "/events",
+      path: "/",
     },
     {
       title: "Innovation Portfolio", //Projects
-      path: "/highlights",
+      path: "/",
     },
     {
       title: "Startup Store", //Marketplace
-      path: "/events",
+      path: "/",
     },
     {
       isDropdown: true,
@@ -29,15 +29,15 @@ function NavLinks() {
       links: [
         {
           title: "SEDS",
-          path: "/academics/departments",
+          path: "/",
         },
         {
           title: "SRB",
-          path: "/academics/resources/library",
+          path: "/",
         },
         {
           title: "Flying Club",
-          path: "/academics/resources/moodle",
+          path: "/",
         },
       ],
     },
