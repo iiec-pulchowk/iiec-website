@@ -1,45 +1,77 @@
-import AnimatedElement from '@/components/Common/Animation/AnimatedElement'
-import React from 'react'
+import AnimatedElement from "@/components/Common/Animation/AnimatedElement";
+import React from "react";
+import {
+  IconBuilding,
+  IconLightbulb,
+  IconRocket,
+  IconTarget,
+  IconUsers,
+  IconTrophy,
+} from "@/components/icons";
 
+// AboutCard Component
 export default function AboutCard() {
-    return (
-        <>
-            <AnimatedElement>
-                <h1 className="m-2 text-3xl font-extrabold text-gray-900 dark:text-white md:text-4xl lg:text-5xl"><span className="text-transparent bg-clip-text bg-gradient-to-r to-blue-700 from-blue-400">| ABOUT</span> AOT :</h1>
-            </AnimatedElement>
+  const features = [
+    {
+      icon: <IconBuilding className="h-8 w-8 text-blue-600" />,
+      title: "State-of-the-Art Facilities",
+      description:
+        "Our center features modern co-working spaces, dedicated labs, meeting rooms, and advanced prototyping facilities to support your innovation journey.",
+    },
+    {
+      icon: <IconTrophy className="h-8 w-8 text-blue-600" />,
+      title: "Track Record of Success",
+      description:
+        "With over 200+ successful startups incubated and रु.50Cr+ in funding raised, we have a proven history of turning innovative ideas into successful ventures.",
+    },
+    {
+      icon: <IconUsers className="h-8 w-8 text-blue-600" />,
+      title: "Expert Mentorship",
+      description:
+        "Access our network of 100+ industry experts, successful entrepreneurs, and technical specialists who provide personalized guidance.",
+    },
+    {
+      icon: <IconLightbulb className="h-8 w-8 text-blue-600" />,
+      title: "Innovation Focus",
+      description:
+        "We specialize in emerging technologies including AI/ML, IoT, Clean Tech, and Digital Healthcare, helping startups stay at the cutting edge.",
+    },
+    {
+      icon: <IconTarget className="h-8 w-8 text-blue-600" />,
+      title: "Industry Partnerships",
+      description:
+        "Strategic collaborations with leading tech companies, research institutions, and government bodies provide unique opportunities for our startups.",
+    },
+    {
+      icon: <IconRocket className="h-8 w-8 text-blue-600" />,
+      title: "Comprehensive Support",
+      description:
+        "From ideation to market entry, we provide end-to-end support including technical resources, business development, and funding access.",
+    },
+  ];
 
+  return (
+    <div className="py-8 sm:py-16">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-3">
+          {features.map((feature, index) => (
             <AnimatedElement>
-                <section className="text-gray-600 body-font ">
-                    <div className="mx-auto flex py-6 md:px-5 md:flex-row justify-center flex-col items-center">
-                        <div className="md:max-w-sm lg:max-w-md md:h-full w-full h-48 overflow-hidden flex justify-center items-center mb-4 md:mb-0">
-                            {/* <img className="w-full md:rounded-lg" alt="hero" src="/images/collegepic(1).jpg" /> */}
-                            <video className="w-full md:rounded-lg" alt="hero" src='/Video/AOTCampus.mp4' autoPlay muted loop />
-                        </div>
-                        <div className="md:w-1/2  md:pl-8 flex flex-col md:items-start md:text-left items-center">
-                            {/* <h1 className="title-font lg:text-3xl text-2xl mb-4 font-bold text-gray-900">
-                                “Aspires to be a pre-eminent deemed university of national standing in education and innovation”.
-                            </h1> */}
-                            <p className="mb-8 leading-relaxed font-medium text-sm sm:text-lg p-2">Established in 2003, Academy of Technology is one of the most acclaimed self-financed engineering colleges in West Bengal. It has been established by Ananda Educational Development & Charitable Organisation (AEDCO), <span className='font-bold'> a trust known for its deep sense of social commitment and dedicated to the promotion of education by inculcating appropriate ethics and attitude.</span></p>
-                        </div>
-                    </div>
-                </section>
+              <div
+                key={index}
+                className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <div className="mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-200 mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {feature.description}
+                </p>
+              </div>
             </AnimatedElement>
-
-
-            <AnimatedElement>
-                <section className="text-gray-600 body-font ">
-                    <div className="mx-auto flex py-10 md:px-5 md:flex-row-reverse justify-center flex-col items-center">
-                        <div className="md:max-w-sm lg:max-w-md md:h-full w-full h-48 overflow-hidden flex justify-center items-center mb-4 md:mb-0">
-                            <img className="w-full md:rounded-lg" alt="hero" src="/images/collegepic(1).jpg" />
-                        </div>
-                        <div className="md:w-1/2 md:pr-8 flex flex-col md:items-start md:text-left items-center">
-                            {/* <h1 className="title-font lg:text-3xl text-2xl mb-4 font-bold text-gray-900">“Aspires to be a pre-eminent deemed university of national standing in education and innovation”.
-                            </h1> */}
-                            <p className="mb-8 leading-relaxed font-medium text-sm sm:text-lg p-2">In a metamorphosis of over 18 years, Academy of Technology has been reinventing itself constantly to explore the infinite possibilities of engineering and technology – an academy that inspires everyone to think differently. It is now the preferred career destination for meritorious students due to its academic integrity and standard as well as its attractive campus placement.</p>
-                        </div>
-                    </div>
-                </section>
-            </AnimatedElement>
-        </>
-    )
-}
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};

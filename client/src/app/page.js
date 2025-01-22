@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { CarouselCompo } from '@/components/Home/Carousel/Carousel'
 import AboutCard from '@/components/About/AboutCard'
 import NoticeLine from '@/components/Home/NoticeLine/NoticeLine'
+import Message from '@/components/Home/Message/Message' 
 import Accordion from '@/components/Home/Accordion/Accordion'
 import EventCardSection from '@/components/EventCard/EventCardSection';
 import HighlightsSection from '@/components/Highlights/HighlightsSection';
@@ -26,6 +27,7 @@ export default function page() {
     <div>
       <CarouselCompo />
       <NoticeLine />
+      <Message />
       <AboutCard />
       <EventCardSection />
       <HighlightsSection />

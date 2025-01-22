@@ -1,9 +1,8 @@
-"use client"
+"use client";
 import React from "react";
 import Link from "next/link";
 import Dropdown from "./Dropdown";
 import { useAuth } from "@/context/auth";
-
 
 function NavLinks() {
   const { authUser, IsLoading, setAuthUser } = useAuth();
@@ -13,6 +12,36 @@ function NavLinks() {
       path: "/",
     },
     {
+      title: "Programs & Events",
+      path: "/events",
+    },
+    {
+      title: "Innovation Portfolio", //Projects
+      path: "/highlights",
+    },
+    {
+      title: "Startup Store", //Marketplace
+      path: "/events",
+    },
+    {
+      isDropdown: true,
+      title: "Our Communities",
+      links: [
+        {
+          title: "SEDS",
+          path: "/academics/departments",
+        },
+        {
+          title: "SRB",
+          path: "/academics/resources/library",
+        },
+        {
+          title: "Flying Club",
+          path: "/academics/resources/moodle",
+        },
+      ],
+    },
+    {
       title: "About",
       path: "/about",
     },
@@ -20,40 +49,6 @@ function NavLinks() {
       title: "Contact",
       path: "/contact",
     },
-    {
-      title: "Events",
-      path: "/events",
-    },
-    {
-      title: "Highlights",
-      path: "/highlights",
-    },
-    {
-      isDropdown: true,
-      title: "Academics",
-      links: [
-        {
-          title: "Departments",
-          path: "/academics/departments",
-        },
-        {
-          title: "Library",
-          path: "/academics/resources/library",
-        },
-        {
-          title: "moodle",
-          path: "/academics/resources/moodle",
-        },
-      ]
-    },
-    {
-      title: "Alumni",
-      path: "/alumni",
-    },
-    // {
-    //   title: "Administration",
-    //   path: "/administration",
-    // },
     {
       authDependent: true,
       title: "LogIn",
@@ -67,21 +62,31 @@ function NavLinks() {
     <>
       {links.map((el, index) => (
         <React.Fragment key={index}>
-          {(el.isDropdown) ?
+          {el.isDropdown ? (
             <Dropdown data={el} />
-            :
+          ) : (
             <li className="m-1 transition duration-300 ease-in-out transform hover:scale-110">
-              {el.authDependent && authUser && authUser?.isAdmin ?
-                <Link href={el.Altpath} className="font-bold text-white hover:underline px-2 bg-transparent">{el.Alttitle}</Link> :
-                <Link href={el.path} className="font-bold text-white hover:underline px-2 bg-transparent">{el.title}</Link>
-              }
-            </li >
-          }
+              {el.authDependent && authUser && authUser?.isAdmin ? (
+                <Link
+                  href={el.Altpath}
+                  className="font-bold text-white hover:underline px-2 bg-transparent"
+                >
+                  {el.Alttitle}
+                </Link>
+              ) : (
+                <Link
+                  href={el.path}
+                  className="font-bold text-white hover:underline px-2 bg-transparent"
+                >
+                  {el.title}
+                </Link>
+              )}
+            </li>
+          )}
         </React.Fragment>
       ))}
     </>
-
-  )
+  );
 }
 
-export default NavLinks
+export default NavLinks;
