@@ -9,7 +9,7 @@ import { AuthUserProvider } from "@/context/auth";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASEURL),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASEURL || "http://localhost:3000"),
   title: "IIEC",
   description: "Incubation Innovation and Entrepreneurship Center",
   generator: "Next.js",
@@ -20,7 +20,7 @@ export const metadata = {
     "sandip",
     "sharad",
     "kamal",
-    "darlame",
+    "darlami",
     "Next.js",
     "React",
   ],
