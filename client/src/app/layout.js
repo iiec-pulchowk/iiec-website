@@ -9,7 +9,9 @@ import { AuthUserProvider } from "@/context/auth";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASEURL || "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASEURL || "http://localhost:3000"
+  ),
   title: "IIEC",
   description: "Incubation Innovation and Entrepreneurship Center",
   generator: "Next.js",
@@ -69,7 +71,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#431d7a" />
+        <meta name="theme-color" content="#0b0191" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className={`${inter.className} min-h-screen `}>
@@ -78,12 +80,23 @@ export default function RootLayout({ children }) {
             <img src="/background.png" className=" h-screen w-full fixed top-0 left-0 -z-50" />
           </div> */}
           <div className=" h-screen w-full fixed top-0 left-0 -z-50 bg-gradient-to-b from-white to-blue-100"></div>
-          <NextTopLoader
+          {/* <NextTopLoader
             color="#050447"
             initialPosition={0.08}
             height={4}
             crawl={true}
             showSpinner={false}
+          /> */}
+          <NextTopLoader
+            color="#050447"
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={3}
+            crawl={true}
+            showSpinner={true}
+            easing="ease"
+            speed={200}
+            shadow="0 0 10px #050447,0 0 5px #050447"
           />
           <Navbar />
 

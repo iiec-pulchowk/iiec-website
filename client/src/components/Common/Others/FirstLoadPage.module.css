@@ -1,6 +1,5 @@
 .fadeContainer {
-  background-color: rgba(0, 0, 0, 1);
-  /* Initially black */
+  background-color: #050447;
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -23,26 +22,21 @@
 }
 
 
-.btnshine {
-  color: #fff;
-  background: linear-gradient(to right, #9f9f9f 0, #fff 10%, #868686 20%);
-  /* background-position: 0; */
+.gradiant_text {
+  background: linear-gradient(
+    90deg, 
+    #0b0191 0%, 
+    #4a4ae6 50%, 
+    #0b0191 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shine 5s infinite linear;
-  /* animation-fill-mode: forwards; */
-  -webkit-text-size-adjust: none;
-  text-decoration: none;
-  white-space: nowrap;
+  background-clip: text;
+  animation: gradient-flow 3s ease infinite;
 }
 
-
-@keyframes shine {
-  0% {
-    background-position: 0;
-  }
-
-  100% {
-    background-position: 1000px;
-  }
+@keyframes gradient-flow {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }

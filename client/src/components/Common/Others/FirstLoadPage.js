@@ -25,8 +25,8 @@ export default function FirstLoadPage({ children }) {
       {FirstLoad &&
         <div className={`${styles.fadeContainer} ${show ? styles.fadeOut : ''}`}>
 
-          <h1 className={`m-4 ${styles.btnshine} text-2xl font-s font-bold md:text-3xl lg:text-4xl`}>Welcome to </h1>
-          <h1 className={`m-4 ${styles.btnshine} text-2xl font-s font-bold md:text-3xl lg:text-4xl`}>IIEC Portfolio</h1>
+          <h1 className={`m-4 ${styles.gradiant_text} text-2xl font-serif font-bold md:text-3xl lg:text-4xl`}>Welcome to </h1>
+          <h1 className={`m-4 ${styles.gradiant_text} text-2xl font-serif font-bold md:text-3xl lg:text-4xl`}>IIEC Portfolio</h1>
 
         </div>
       }
