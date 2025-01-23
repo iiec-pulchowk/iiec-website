@@ -34,7 +34,12 @@ export default function FAQ({ faqs }) {
                 aria-expanded={activeIndex === index}
                 aria-controls={`accordion-collapse-body-${index}`}
               >
-                <span>{faq.title}</span>
+                <span
+                  className="text-left
+"
+                >
+                  {faq.title}
+                </span>
                 <svg
                   data-accordion-icon
                   className={`w-3 h-3 shrink-0 ${

@@ -1,27 +1,25 @@
-"use client"
-import React, { useEffect } from 'react';
-import { CarouselCompo } from '@/components/Home/Carousel/Carousel'
-import AboutCard from '@/components/About/AboutCard'
-import NoticeLine from '@/components/Home/NoticeLine/NoticeLine'
-import Message from '@/components/Home/Message/Message' 
-import Accordion from '@/components/Home/Accordion/Accordion'
-import EventCardSection from '@/components/EventCard/EventCardSection';
-import HighlightsSection from '@/components/Highlights/HighlightsSection';
-import DepartmentsSection from '@/components/Departments/DepartmentsSection';
+"use client";
+import React, { useEffect } from "react";
+import { CarouselCompo } from "@/components/Home/Carousel/Carousel";
+import AboutCard from "@/components/About/AboutCard";
+import NoticeLine from "@/components/Home/NoticeLine/NoticeLine";
+import Message from "@/components/Home/Message/Message";
+import Accordion from "@/components/Home/Accordion/Accordion";
+import EventCardSection from "@/components/EventCard/EventCardSection";
+import HighlightsSection from "@/components/Highlights/HighlightsSection";
+import CommunitySection from "@/components/Departments/DepartmentsSection";
 
-
-// ==================== Home Page ==================== 
+// ==================== Home Page ====================
 export default function page() {
-
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       window.scrollTo({
         top: 0,
         left: 0,
-        behavior: 'smooth',
+        behavior: "smooth",
       });
     }
-  }, [])
+  }, []);
 
   return (
     <div>
@@ -31,8 +29,8 @@ export default function page() {
       <AboutCard />
       <EventCardSection />
       <HighlightsSection />
-      <DepartmentsSection />
+      <CommunitySection />
       <Accordion />
     </div>
-  )
+  );
 }
