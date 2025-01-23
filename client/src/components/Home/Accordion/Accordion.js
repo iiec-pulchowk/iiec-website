@@ -43,10 +43,9 @@ export default function Accordion() {
     <div className="mb-10">
       <AnimatedElement>
         <h1 className="m-4 mb-10 text-3xl font-extrabold text-gray-900 dark:text-white md:text-4xl lg:text-5xl">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r to-blue-700 from-blue-400">
-            | FAQ
-          </span>{" "}
-          :
+          <span className="text-transparent bg-clip-text bg-gradient-to-r to-indigo-900 from-blue-400">
+            ⁉ FAQ
+          </span>
         </h1>
       </AnimatedElement>
       <FAQ faqs={AccordionData} />

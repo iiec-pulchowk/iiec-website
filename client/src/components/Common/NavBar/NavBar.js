@@ -13,7 +13,9 @@ export default function Navbar() {
   return (
     <>
       <div className="sticky bg-white bg-opacity-40 top-0 z-50 backdrop-blur-2xl transform transition-all duration-1000 ease-in-out">
-        <nav className="bg-transparent">
+        <nav
+          className="bg-transparent"
+        >
           <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-2">
             {/* college name and logo  */}
             <Link href="/" className="flex items-center space-x-3">
@@ -22,13 +24,16 @@ export default function Navbar() {
                 className="h-8 md:h-10 lg:h-12"
                 alt="IIEC Logo"
               />
-              <AnimatedElement className="font-bold  font-serif text-xs sm:text-lg text-blue-900 ">
-                Incubation Innovation and Entrepreneurship Center{/*IIEC for mobile*/}
-                <div className="text-[8px] sm:text-xs text-right ">
-                  {/* Transform Your Ideas Into Reality */}
-                  Empowering ideas, nurturing innovation, and fostering
-                  entrepreneurship
-                </div>
+              <AnimatedElement
+                variant="slideLeft"
+                delay={300}
+                duration={800}
+                threshold={0.5}
+                once={true}
+                className="font-bold  font-serif text-xs sm:text-lg text-blue-900 "
+              >
+                Incubation Innovation and Entrepreneurship Center
+                {/*IIEC for mobile*/}
               </AnimatedElement>
             </Link>
 

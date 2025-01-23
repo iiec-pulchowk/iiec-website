@@ -21,7 +21,7 @@ function NavLinks() {
     },
     {
       title: "Startup Store", //Marketplace
-      path: "/",
+      path: "/startup-store",
     },
     {
       isDropdown: true,
