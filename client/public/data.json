@@ -1,0 +1,155 @@
+{
+    "CarouselImages": [
+        {
+            "ImageLink": "/images/Building 1.png"
+        },
+        {
+            "ImageLink": "/images/Building 2.jpg"
+        },
+        {
+            "ImageLink": "/images/Building 3.png"
+        },
+        {
+            "ImageLink": "/images/Inner 2.png"
+        },
+        {
+            "ImageLink": "/images/Inner 4.png"
+        },
+        {
+            "ImageLink": "/images/Robot.png"
+        }
+    ],
+    "NoticeLineData": [
+        {
+            "Title": "InnoCraft - Where Innovation Meets Craftsmanship and Entrepreneurship!, 2081",
+            "Link": "/"
+        },
+        {
+            "Title": "Art of Science, 2081",
+            "Link": "/"
+        },
+        {
+            "Title": "Call For Applications, 2080",
+            "Link": "/"
+        },
+        {
+            "Title": "Dhorpaten Trial Evaluation, 2078",
+            "Link": "/"
+        }
+    ],
+    "CommunitiesData": [
+        {
+            "Title": "SEDS Pulchowk",
+            "Keyword": "seds",
+            "Description": "SEDS Pulchowk by its name is the student club with acronym Student for Exploration and Dwvwlopmwnt of Space",
+            "PageLink": "/",
+            "BannerPic": "https://sedsnepal.org/wp-content/uploads/2019/12/seds-pulchok.png",
+            "PageRouteData": {
+                "DepartmentName": "SEDS Pulchwok",
+                "YearofEstablishment": "July 2019",
+                "HODname": "Siddhant Yadav",
+                "HODContactMailId": "siddhant@pcampus.edu.np",
+                "DepartmentStaticData": "/RichText/ECE.html"
+            }
+        },
+        {
+            "Title": "SRB",
+            "Keyword": "srb",
+            "Description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+            "PageLink": "/",
+            "BannerPic": "https://th.bing.com/th/id/OIP.j6JlK4SIweHhBmCXgWzZJQHaHa?rs=1&pid=ImgDetMain",
+            "PageRouteData": {
+                "DepartmentName": "SRB Pulchowk",
+                "YearofEstablishment": "July 2020",
+                "HODname": "Siddhant Yadav",
+                "HODContactMailId": "siddhant@pcampus.edu.np",
+                "DepartmentStaticData": "/RichText/ECE.html"
+            }
+        },{
+            "Title": "Flying Club",
+            "Keyword": "flying-club",
+            "Description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+            "PageLink": "/",
+            "BannerPic": "https://static.vecteezy.com/system/resources/previews/015/145/323/large_2x/flying-club-logo-outline-style-vector.jpg",
+            "PageRouteData": {
+                "DepartmentName": "Flying Club Pulchowk",
+                "YearofEstablishment": "July 2023",
+                "HODname": "Siddhant Yadav",
+                "HODContactMailId": "siddhant@pcampus.edu.np",
+                "DepartmentStaticData": "/RichText/ECE.html"
+            }
+        }
+    ],
+    "HighlightsData": [
+        {
+            "Title": "Bike Ambulance",
+            "Description": "In rural areas, inadequate transport links hinder sustainable development by limiting access to essential services and goods. Our project focused on enhancing mountain bikes and cargo bicycles with simple electrification kits, extending ride time and towing capabilities. Additionally, we've designed a motorbike ambulance for the Dhorpatan valley, providing vital emergency transportation to the nearest town of Burtibag. This initiative aims to bridge the mobility gap for rural communities.",
+            "PageLink": "/",
+            "BannerPic": "https://lh5.googleusercontent.com/8HKf8iXb6szUs_U30zWMmw-_npvz8nwu8vH_GZmHvsnXdUZa7BwAKzzRbJtaDJ0NyQ1s9Thk8X6P6czJvFdjgX9wdOXnJIeX-Be4fhf1t96oiY2hKOVix8IxoTwFfJmIag=w1280"
+        },
+        {
+            "Title": "InnoCraft - Where Innovation Meets Craftsmanship and Entrepreneurship",
+            "Description": "This project was awarded by the Nepal Academy of Science and Technology as part of its COVID-19 Combat and Innovation Program. The initiative aimed to address the rapid spread of the COVID-19 disease by devising a strategy to minimize human exposure through the deployment of robots for disinfection procedures within hospital settings in Kathmandu. The study also anticipated that this approach would prove instrumental in reducing the likelihood of secondary infections among COVID-19 patients, thanks to the effective removal of bacterial and fungal pathogens responsible for nosocomial infections. ",
+            "PageLink": "/",
+            "BannerPic": "https://lh5.googleusercontent.com/tZgZGezr7vONtKsvBhqeOSE2JR-oGiLadndC5gYu9agGdTFQVNymkJxshwd9JyqWzxFSMs2t37-2hIFezfNF8g=w1280"
+        },
+        {
+            "Title": "InnoCraft - Where Innovation Meets Craftsmanship and Entrepreneurship",
+            "Description": "Here student develop there innovative solutions to real world problems and showcase them to the world. The event is a platform for students to demonstrate their creativity, technical skills, and entrepreneurial spirit. It features project exhibitions, competitions, workshops, and talks by industry experts. Participants can network with professionals, gain valuable insights, and explore career opportunities in the field of innovation and entrepreneurship.",
+            "PageLink": "/",
+            "BannerPic": "https://colido.wordpress.com/wp-content/uploads/2015/06/sample01.png"
+        }
+    ],
+    "EventsData": [
+        {
+            "Title": "InnoCraft - Where Innovation Meets Craftsmanship and Entrepreneurship",
+            "Description": "Here student develop there innovative solutions to real world problems and showcase them to the world. The event is a platform for students to demonstrate their creativity, technical skills, and entrepreneurial spirit. It features project exhibitions, competitions, workshops, and talks by industry experts. Participants can network with professionals, gain valuable insights, and explore career opportunities in the field of innovation and entrepreneurship.",
+            "PageLink": "/",
+            "BannerPic": "https://colido.wordpress.com/wp-content/uploads/2015/06/sample01.png"
+        },
+        {
+            "Title": "InnoCraft - Where Innovation Meets Craftsmanship and Entrepreneurship",
+            "Description": "Here student develop there innovative solutions to real world problems and showcase them to the world. The event is a platform for students to demonstrate their creativity, technical skills, and entrepreneurial spirit. It features project exhibitions, competitions, workshops, and talks by industry experts. Participants can network with professionals, gain valuable insights, and explore career opportunities in the field of innovation and entrepreneurship.",
+            "PageLink": "/",
+            "BannerPic": "https://colido.wordpress.com/wp-content/uploads/2015/06/sample01.png"
+        },
+        {
+            "Title": "InnoCraft - Where Innovation Meets Craftsmanship and Entrepreneurship",
+            "Description": "Here student develop there innovative solutions to real world problems and showcase them to the world. The event is a platform for students to demonstrate their creativity, technical skills, and entrepreneurial spirit. It features project exhibitions, competitions, workshops, and talks by industry experts. Participants can network with professionals, gain valuable insights, and explore career opportunities in the field of innovation and entrepreneurship.",
+            "PageLink": "/",
+            "BannerPic": "https://colido.wordpress.com/wp-content/uploads/2015/06/sample01.png"
+        }
+    ],
+    "ContactData": [
+        {
+            "Title": "IIEC Office: ",
+            "Tel": " +977-98xxxxxxxx",
+            "Email": "iiec@pcampus.edu.np"
+        },
+        {
+            "Title": "Director/ IIEC Office:",
+            "Tel": " +977-98xxxxxxxx",
+            "Email": "darlami.kd@gmail.com"
+        },
+        {
+            "Title": "SEDS Pulchowk",
+            "Tel": "+977-98xxxxxxxx",
+            "Email": "seds@pcampus.edu.np"
+        },
+        {
+            "Title": "President/ SRB",
+            "Tel": "+977-98xxxxxxxx",
+            "Email": "president@pcampus.edu.np"
+        },
+        {
+            "Title": "President/ Flying Club",
+            "Tel": " +977-98xxxxxxxx",
+            "Email": "president@pcampus.edu.np"
+        },
+        {
+            "Title": "IT Community",
+            "Tel": " +977-98xxxxxxxx",
+            "Email": "it@pcampus.edu.np"
+        }
+    ]
+}
