@@ -45,8 +45,6 @@ export function CarouselCompo() {
                 alt="image"
                 className="object-cover h-full w-full"
               />
-              {/* Text and Button */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white to-transparent z-20"></div>
             </div>
           ))}
         </Carousel>
