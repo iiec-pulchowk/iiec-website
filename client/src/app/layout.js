@@ -1,10 +1,17 @@
+// import { Inter } from "next/font/google";
+// import "./globals.css";
+// import Footer from "@/components/Common/Footer/Footer";
+// import Navbar from "@/components/Common/NavBar/NavBar";
+// import FirstLoadPage from "@/components/Common/Others/FirstLoadPage";
+// import NextTopLoader from "nextjs-toploader";
+// import { AuthUserProvider } from "@/context/auth";
+
+import React from "react";
 import { Inter } from "next/font/google";
-import "./globals.css";
-import Footer from "@/components/Common/Footer/Footer";
-import Navbar from "@/components/Common/NavBar/NavBar";
-import FirstLoadPage from "@/components/Common/Others/FirstLoadPage";
-import NextTopLoader from "nextjs-toploader";
-import { AuthUserProvider } from "@/context/auth";
+import './globals.css';
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,20 +26,18 @@ export const metadata = {
   referrer: "origin-when-cross-origin",
   keywords: [
     "IIEC",
-    "sandip",
-    "sharad",
-    "kamal",
-    "darlami",
-    "Next.js",
-    "React",
+    "Kamal",
+    "Darlami",
+    "Pulchowk",
+    "IOE"
   ],
 
   authors: [
-    { name: "Sandip Katel" },
-    { name: "Sandp Katel", url: "https://iiec-website.vercel.app" },
+    { name: "Sandip Katel", url: "https://www.skatel.com.np/" },
+    { name: "Kamal Darlami", url: "https://sites.google.com/pcampus.edu.np/kamaldarlami/" },
   ],
-  creator: "Sandip Katel",
-  publisher: "Kamal Darlame",
+  creator: "Kamal Darlami",
+  publisher: "IIEC Pulchowk",
 
   icons: {
     icon: "/logo.png",
@@ -67,47 +72,20 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}) {
   return (
-    <html lang="en">
-      <head>
-        <meta name="theme-color" content="#0b0191" />
-        <meta name="mobile-web-app-capable" content="yes" />
-      </head>
-      <body className={`${inter.className} min-h-screen `}>
-        <AuthUserProvider>
-          {/* <div>
-            <img src="/background.png" className=" h-screen w-full fixed top-0 left-0 -z-50" />
-          </div> */}
-          <div className=" h-screen w-full fixed top-0 left-0 -z-50 bg-gradient-to-b from-white to-blue-100"></div>
-          {/* <NextTopLoader
-            color="#050447"
-            initialPosition={0.08}
-            height={4}
-            crawl={true}
-            showSpinner={false}
-          /> */}
-          <NextTopLoader
-            color="#050447"
-            initialPosition={0.08}
-            crawlSpeed={200}
-            height={3}
-            crawl={true}
-            showSpinner={true}
-            easing="ease"
-            speed={200}
-            shadow="0 0 10px #050447,0 0 5px #050447"
-          />
-          <Navbar />
-
-          {/* <div className=" min-h-screen overflow-x-hidden">
-        {children}
-        </div>
-        <Footer /> */}
-
-          <FirstLoadPage children={children} />
-        </AuthUserProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          <div className="flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
