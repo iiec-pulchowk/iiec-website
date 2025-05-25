@@ -1,11 +1,3 @@
-// import { Inter } from "next/font/google";
-// import "./globals.css";
-// import Footer from "@/components/Common/Footer/Footer";
-// import Navbar from "@/components/Common/NavBar/NavBar";
-// import FirstLoadPage from "@/components/Common/Others/FirstLoadPage";
-// import NextTopLoader from "nextjs-toploader";
-// import { AuthUserProvider } from "@/context/auth";
-
 import React from "react";
 import { Inter } from "next/font/google";
 import './globals.css';
