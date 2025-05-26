@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Plus,
   Edit,
@@ -11,6 +11,10 @@ import {
   ShoppingCart,
   Upload,
   Eye,
+  Check,
+  X as XIcon,
+  Image as ImageIcon,
+  Link,
 } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -21,115 +25,192 @@ const AdminDashboard = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Mock API URL - replace with your FastAPI backend URL
-  const API_BASE = "http://localhost:8000/api";
+  // Update API URL to match your FastAPI backend
+  const API_BASE = "http://localhost:8080";
 
-  // Initialize with mock data for demonstration
+  // Remove mock data initialization and replace with API calls
   useEffect(() => {
-    setEvents([
-      {
-        id: 1,
-        title: "Annual Conference 2025",
-        description: "Join us for our biggest event of the year",
-        date: "2025-06-15",
-        time: "09:00",
-        location: "Convention Center",
-        image: null,
-        status: "upcoming",
-      },
-      {
-        id: 2,
-        title: "Networking Meetup",
-        description: "Connect with industry professionals",
-        date: "2025-03-20",
-        time: "18:00",
-        location: "Downtown Office",
-        image: null,
-        status: "upcoming",
-      },
-    ]);
+    fetchData();
+  }, [activeTab]);
 
-    setNotices([
-      {
-        id: 1,
-        title: "Important Update",
-        content: "Please note the new office hours starting next week",
-        priority: "high",
-        publishDate: "2025-05-20",
-        expiryDate: "2025-06-20",
-        status: "active",
-      },
-      {
-        id: 2,
-        title: "Maintenance Notice",
-        content: "System maintenance scheduled for this weekend",
-        priority: "medium",
-        publishDate: "2025-05-25",
-        expiryDate: "2025-05-27",
-        status: "active",
-      },
-    ]);
+  // Fetch data based on active tab
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      let response;
+      switch (activeTab) {
+        case "events":
+          // Since events endpoint doesn't exist yet, keep mock data for now
+          setEvents([
+            {
+              id: 1,
+              title: "Annual Conference 2025",
+              description: "Join us for our biggest event of the year",
+              date: "2025-06-15",
+              time: "09:00",
+              location: "Convention Center",
+              image: null,
+              status: "upcoming",
+            },
+          ]);
+          break;
+        case "notices":
+          // Since notices endpoint doesn't exist yet, keep mock data for now
+          setNotices([
+            {
+              id: 1,
+              title: "Important Update",
+              content: "Please note the new office hours starting next week",
+              priority: "high",
+              publishDate: "2025-05-20",
+              expiryDate: "2025-06-20",
+              status: "active",
+            },
+          ]);
+          break;
+        case "products":
+          // This will connect to your actual backend when you add products endpoints
+          try {
+            response = await fetch(`${API_BASE}/products`);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            // Transform backend data to match our frontend structure
+            const transformedData = data.map((product) => ({
+              ...product,
+              inStock: product.in_stock !== undefined ? product.in_stock : true,
+              imageUrl: product.image || null,
+            }));
 
-    setProducts([
-      {
-        id: 1,
-        name: "Conference T-Shirt",
-        description: "Official conference merchandise",
-        price: 25.0,
-        category: "apparel",
-        stock: 50,
-        image: null,
-        status: "active",
-      },
-      {
-        id: 2,
-        name: "Membership Package",
-        description: "Annual membership with benefits",
-        price: 99.0,
-        category: "membership",
-        stock: 999,
-        image: null,
-        status: "active",
-      },
-    ]);
-  }, []);
+            setProducts(transformedData);
+          } catch (err) {
+            console.error(
+              "Products API not available, using empty array:",
+              err
+            );
+            setProducts([]);
+          }
+          break;
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError(`Failed to fetch ${activeTab}. ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab, API_BASE]);
 
   const handleSave = async (item, type) => {
     setLoading(true);
+    setError(null);
     try {
-      // Mock API call - replace with actual FastAPI endpoints
-      if (editingItem) {
-        // Update existing item
-        const updatedItem = { ...item, id: editingItem.id };
-        if (type === "events") {
-          setEvents((prev) =>
-            prev.map((e) => (e.id === editingItem.id ? updatedItem : e))
-          );
-        } else if (type === "notices") {
-          setNotices((prev) =>
-            prev.map((n) => (n.id === editingItem.id ? updatedItem : n))
-          );
-        } else if (type === "products") {
-          setProducts((prev) =>
-            prev.map((p) => (p.id === editingItem.id ? updatedItem : p))
-          );
-        }
-      } else {
-        // Create new item
-        const newItem = { ...item, id: Date.now() };
-        if (type === "events") {
-          setEvents((prev) => [...prev, newItem]);
-        } else if (type === "notices") {
-          setNotices((prev) => [...prev, newItem]);
-        } else if (type === "products") {
-          setProducts((prev) => [...prev, newItem]);
-        }
+      let response;
+      let endpoint;
+      let method = editingItem ? "PUT" : "POST";
+      let url;
+
+      switch (type) {
+        case "events":
+          // Mock handling until backend endpoints are created
+          if (editingItem) {
+            const updatedItem = { ...item, id: editingItem.id };
+            setEvents((prev) =>
+              prev.map((e) => (e.id === editingItem.id ? updatedItem : e))
+            );
+          } else {
+            const newItem = { ...item, id: Date.now() };
+            setEvents((prev) => [...prev, newItem]);
+          }
+          break;
+        case "notices":
+          // Mock handling until backend endpoints are created
+          if (editingItem) {
+            const updatedItem = { ...item, id: editingItem.id };
+            setNotices((prev) =>
+              prev.map((n) => (n.id === editingItem.id ? updatedItem : n))
+            );
+          } else {
+            const newItem = { ...item, id: Date.now() };
+            setNotices((prev) => [...prev, newItem]);
+          }
+          break;
+        case "products":
+          // Real API integration for products when backend is ready
+          url = editingItem
+            ? `${API_BASE}/products/${editingItem.id}`
+            : `${API_BASE}/products/`;
+
+          // Transform frontend data to match backend structure
+          const productData = {
+            ...item,
+            in_stock: item.inStock,
+            image: item.imageUrl || null,
+          };
+          delete productData.inStock; // Remove frontend property
+          delete productData.imageUrl; // Remove frontend property
+
+          try {
+            response = await fetch(url, {
+              method: method,
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(productData),
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const savedItem = await response.json();
+            // Transform backend response to frontend structure
+            const transformedItem = {
+              ...savedItem,
+              inStock:
+                savedItem.in_stock !== undefined ? savedItem.in_stock : true,
+              imageUrl: savedItem.image || null,
+            };
+
+            if (editingItem) {
+              setProducts((prev) =>
+                prev.map((p) => (p.id === editingItem.id ? transformedItem : p))
+              );
+            } else {
+              setProducts((prev) => [...prev, transformedItem]);
+            }
+          } catch (err) {
+            console.error("API call failed, using mock behavior:", err);
+            // Fallback to mock behavior
+            if (editingItem) {
+              const updatedItem = {
+                ...item,
+                id: editingItem.id,
+                inStock: item.inStock !== undefined ? item.inStock : true,
+              };
+              setProducts((prev) =>
+                prev.map((p) => (p.id === editingItem.id ? updatedItem : p))
+              );
+            } else {
+              const newItem = {
+                ...item,
+                id: Date.now(),
+                inStock: item.inStock !== undefined ? item.inStock : true,
+              };
+              setProducts((prev) => [...prev, newItem]);
+            }
+          }
+          break;
       }
+
       setShowForm(false);
       setEditingItem(null);
     } catch (error) {
       console.error("Error saving item:", error);
+      setError(`Failed to save ${type.slice(0, -1)}. ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -139,17 +220,38 @@ const AdminDashboard = () => {
     if (!confirm("Are you sure you want to delete this item?")) return;
 
     setLoading(true);
+    setError(null);
     try {
-      // Mock API call - replace with actual FastAPI endpoints
-      if (type === "events") {
-        setEvents((prev) => prev.filter((e) => e.id !== id));
-      } else if (type === "notices") {
-        setNotices((prev) => prev.filter((n) => n.id !== id));
-      } else if (type === "products") {
-        setProducts((prev) => prev.filter((p) => p.id !== id));
+      switch (type) {
+        case "events":
+          // Mock handling until backend endpoints are created
+          setEvents((prev) => prev.filter((e) => e.id !== id));
+          break;
+        case "notices":
+          // Mock handling until backend endpoints are created
+          setNotices((prev) => prev.filter((n) => n.id !== id));
+          break;
+        case "products":
+          // Real API integration for products when backend is ready
+          try {
+            const response = await fetch(`${API_BASE}/products/${id}`, {
+              method: "DELETE",
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            setProducts((prev) => prev.filter((p) => p.id !== id));
+          } catch (err) {
+            console.error("API call failed, using mock behavior:", err);
+            setProducts((prev) => prev.filter((p) => p.id !== id));
+          }
+          break;
       }
     } catch (error) {
       console.error("Error deleting item:", error);
+      setError(`Failed to delete ${type.slice(0, -1)}. ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -182,6 +284,11 @@ const AdminDashboard = () => {
             <h1 className="text-2xl font-bold text-gray-900">
               Admin Dashboard
             </h1>
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                {error}
+              </div>
+            )}
             <div className="flex space-x-2">
               <button
                 onClick={() => setShowForm(true)}
@@ -200,9 +307,21 @@ const AdminDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-8">
             {[
-              { id: "events", label: "Events", icon: Calendar },
-              { id: "notices", label: "Notices", icon: Bell },
-              { id: "products", label: "Products", icon: ShoppingCart },
+              {
+                id: "events",
+                label: "Events",
+                icon: Calendar,
+              },
+              {
+                id: "notices",
+                label: "Notices",
+                icon: Bell,
+              },
+              {
+                id: "products",
+                label: "Products",
+                icon: ShoppingCart,
+              },
             ].map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
@@ -342,13 +461,13 @@ const ItemList = ({ items, type, onEdit, onDelete, loading }) => {
                       Product
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Image
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Price
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Stock
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
+                      In Stock
                     </th>
                   </>
                 )}
@@ -438,20 +557,40 @@ const ItemList = ({ items, type, onEdit, onDelete, loading }) => {
                           </div>
                         </div>
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {item.imageUrl ? (
+                          <img
+                            src={item.imageUrl}
+                            alt={item.name}
+                            className="h-12 w-12 rounded-lg object-cover"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.nextSibling.style.display = "flex";
+                            }}
+                          />
+                        ) : null}
+                        <div
+                          className={`h-12 w-12 rounded-lg bg-gray-100 flex items-center justify-center ${
+                            item.imageUrl ? "hidden" : "flex"
+                          }`}
+                        >
+                          <ImageIcon size={20} className="text-gray-400" />
+                        </div>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         ${item.price.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.stock}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                            item.status
-                          )}`}
-                        >
-                          {item.status}
-                        </span>
+                        <div className="flex items-center">
+                          {item.inStock ? (
+                            <Check size={16} className="text-green-600" />
+                          ) : (
+                            <XIcon size={16} className="text-red-600" />
+                          )}
+                          <span className="ml-2">
+                            {item.inStock ? "In Stock" : "Out of Stock"}
+                          </span>
+                        </div>
                       </td>
                     </>
                   )}
@@ -483,6 +622,26 @@ const ItemList = ({ items, type, onEdit, onDelete, loading }) => {
 
 const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
   const [formData, setFormData] = useState(item || getDefaultFormData(type));
+  const [imageUploadType, setImageUploadType] = useState("url"); // 'url' or 'file'
+  const [imagePreview, setImagePreview] = useState(null);
+
+  // Update imagePreview when item changes (for editing)
+  useEffect(() => {
+    if (item?.imageUrl) {
+      setImagePreview(item.imageUrl);
+    } else {
+      setImagePreview(null);
+    }
+  }, [item]);
+
+  // Update formData when item changes (for editing)
+  useEffect(() => {
+    if (item) {
+      setFormData(item);
+    } else {
+      setFormData(getDefaultFormData(type));
+    }
+  }, [item, type]);
 
   function getDefaultFormData(type) {
     switch (type) {
@@ -510,10 +669,8 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
           name: "",
           description: "",
           price: 0,
-          category: "",
-          stock: 0,
-          image: null,
-          status: "active",
+          inStock: true,
+          imageUrl: "",
         };
       default:
         return {};
@@ -527,6 +684,42 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageUrlChange = (url) => {
+    handleChange("imageUrl", url);
+    setImagePreview(url);
+  };
+
+  const handleFileUpload = async (file) => {
+    if (!file) return;
+
+    // For now, we'll use a placeholder upload service
+    // In production, you'd upload to your server or cloud storage
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      // Placeholder - replace with actual upload endpoint
+      // const response = await fetch(`${API_BASE}/upload`, {
+      //   method: 'POST',
+      //   body: formData,
+      // });
+      // const data = await response.json();
+      // handleChange("imageUrl", data.url);
+      // setImagePreview(data.url);
+
+      // For now, create a local preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        handleChange("imageUrl", dataUrl);
+        setImagePreview(dataUrl);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
   };
 
   return (
@@ -709,31 +902,17 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
 
         {type === "products" && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Product Name
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category
-                </label>
-                <input
-                  type="text"
-                  value={formData.category}
-                  onChange={(e) => handleChange("category", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Product Name
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
             </div>
 
             <div>
@@ -749,7 +928,97 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Product Image
+              </label>
+              <div className="space-y-4">
+                {/* Image Upload Type Selector */}
+                <div className="flex space-x-4">
+                  <button
+                    type="button"
+                    onClick={() => setImageUploadType("url")}
+                    className={`px-3 py-2 text-sm font-medium rounded-md flex items-center space-x-2 ${
+                      imageUploadType === "url"
+                        ? "bg-blue-100 text-blue-700 border border-blue-300"
+                        : "bg-gray-100 text-gray-700 border border-gray-300"
+                    }`}
+                  >
+                    <Link size={16} />
+                    <span>URL</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setImageUploadType("file")}
+                    className={`px-3 py-2 text-sm font-medium rounded-md flex items-center space-x-2 ${
+                      imageUploadType === "file"
+                        ? "bg-blue-100 text-blue-700 border border-blue-300"
+                        : "bg-gray-100 text-gray-700 border border-gray-300"
+                    }`}
+                  >
+                    <Upload size={16} />
+                    <span>Upload</span>
+                  </button>
+                </div>
+
+                {/* URL Input */}
+                {imageUploadType === "url" && (
+                  <div>
+                    <input
+                      type="url"
+                      placeholder="Enter image URL"
+                      value={formData.imageUrl || ""}
+                      onChange={(e) => handleImageUrlChange(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                )}
+
+                {/* File Upload */}
+                {imageUploadType === "file" && (
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e.target.files[0])}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Supported formats: JPG, PNG, GIF (Max 5MB)
+                    </p>
+                  </div>
+                )}
+
+                {/* Image Preview */}
+                {imagePreview && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Preview
+                    </label>
+                    <div className="relative inline-block">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="h-32 w-32 object-cover rounded-lg border"
+                        onError={() => setImagePreview(null)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImagePreview(null);
+                          handleChange("imageUrl", "");
+                        }}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Price ($)
@@ -767,31 +1036,19 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Stock
+                  In Stock
                 </label>
-                <input
-                  type="number"
-                  value={formData.stock}
-                  onChange={(e) =>
-                    handleChange("stock", parseInt(e.target.value) || 0)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Status
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => handleChange("status", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="draft">Draft</option>
-                </select>
+                <div className="flex items-center mt-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.inStock}
+                    onChange={(e) => handleChange("inStock", e.target.checked)}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label className="ml-2 block text-sm text-gray-900">
+                    Product is in stock
+                  </label>
+                </div>
               </div>
             </div>
           </>
