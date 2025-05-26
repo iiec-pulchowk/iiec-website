@@ -22,13 +22,44 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-def get_posts(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Post).offset(skip).limit(limit).all()
+def get_product(db: Session, product_id: int):
+    return db.query(models.Product).filter(models.Product.product_id == product_id).first()
 
 
-def create_post(db: Session, post: schemas.PostCreate):
-    db_post = models.Post(title=post.title, content=post.content)
-    db.add(db_post)
+def get_products(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Product).offset(skip).limit(limit).all()
+
+
+def create_product(db: Session, product: schemas.ProductCreate):
+    db_product = models.Product(
+        name=product.name,
+        description=product.description,
+        price=product.price,
+        image=product.image,
+        in_stock=product.in_stock
+    )
+    db.add(db_product)
     db.commit()
-    db.refresh(db_post)
-    return db_post
+    db.refresh(db_product)
+    return db_product
+
+
+def update_product(db: Session, product_id: int, product_update: schemas.ProductUpdate):
+    db_product = db.query(models.Product).filter(
+        models.Product.id == product_id).first()
+    if db_product:
+        update_data = product_update.dict(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(db_product, field, value)
+        db.commit()
+        db.refresh(db_product)
+    return db_product
+
+
+def delete_product(db: Session, product_id: int):
+    db_product = db.query(models.Product).filter(
+        models.Product.id == product_id).first()
+    if db_product:
+        db.delete(db_product)
+        db.commit()
+    return db_product
