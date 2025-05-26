@@ -1,36 +1,280 @@
-"use client";
-import React, { useEffect } from "react";
-import { CarouselCompo } from "@/components/Home/Carousel/Carousel";
-import AboutCard from "@/components/About/AboutCard";
-import NoticeLine from "@/components/Home/NoticeLine/NoticeLine";
-import Message from "@/components/Home/Message/Message";
-import Accordion from "@/components/Home/Accordion/Accordion";
-import EventCardSection from "@/components/EventCard/EventCardSection";
-import HighlightsSection from "@/components/Highlights/HighlightsSection";
-import CommunitySection from "@/components/Departments/DepartmentsSection";
+import Link from "next/link"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { CalendarDays, ArrowRight, Lightbulb, Users, Rocket } from "lucide-react"
+import HeroAnimation from "@/components/hero-animation"
 
-// ==================== Home Page ====================
-export default function page() {
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: "smooth",
-      });
-    }
-  }, []);
-
+export default function Home() {
   return (
-    <div>
-      <CarouselCompo />
-      <NoticeLine />
-      <Message />
-      <AboutCard />
-      <EventCardSection />
-      <HighlightsSection />
-      <CommunitySection />
-      <Accordion />
+    <div className="flex flex-col min-h-screen">
+      {/* Hero Section with Animation */}
+      <section className="relative w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-r from-purple-50 to-blue-50">
+        <div className="container px-4 md:px-6">
+          <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+            <div className="flex flex-col justify-center space-y-4">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                  Empowering Innovators & Entrepreneurs
+                </h1>
+                <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  We provide the resources, mentorship, and community to help turn your ideas into successful ventures.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                <Button asChild size="lg">
+                  <Link href="/programs">Explore Programs</Link>
+                </Button>
+                <Button variant="outline" size="lg" asChild>
+                  <Link href="/contact">Get in Touch</Link>
+                </Button>
+              </div>
+            </div>
+            <div className="relative h-[300px] sm:h-[400px] lg:h-[500px]">
+              <HeroAnimation />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Message from Head Section */}
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
+        <div className="container px-4 md:px-6">
+          <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+            <div className="flex items-center justify-center">
+              <div className="relative h-[300px] w-[300px] sm:h-[400px] sm:w-[400px] rounded-full overflow-hidden">
+                <Image
+                  src="/personnel/ChairPerson.jpeg?height=400&width=400"
+                  alt="Director of Innovation Center"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
+            <div className="flex flex-col justify-center space-y-4">
+              <div className="space-y-2">
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                  Message from Our Head
+                </h2>
+                <blockquote className="border-l-4 pl-4 italic text-muted-foreground">
+                  "Innovation is not just about new ideas; it's about creating value and impact. At our center, we're
+                  committed to nurturing the next generation of entrepreneurs who will shape our future."
+                </blockquote>
+                <p className="text-muted-foreground">
+                  Our Innovation Center was founded with a vision to create an ecosystem where ideas can flourish and
+                  entrepreneurs can thrive. We believe in the power of collaboration, mentorship, and continuous
+                  learning.
+                </p>
+                <p className="font-semibold">Asst. Prof. Kamal Darlami  </p>
+              </div>
+              <div>
+                <Button variant="outline" asChild>
+                  <Link href="/about">Learn More About Us</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming Events Section */}
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Upcoming Events</h2>
+              <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Join us for workshops, seminars, and networking opportunities designed to help you grow.
+              </p>
+            </div>
+          </div>
+          <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="overflow-hidden">
+                <CardHeader className="p-0">
+                  <div className="relative h-[200px] w-full">
+                    <Image
+                      src={`/placeholder.svg?height=200&width=400&text=Event+${i}`}
+                      alt={`Event ${i}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="flex items-center text-sm text-muted-foreground mb-2">
+                    <CalendarDays className="mr-1 h-4 w-4" />
+                    <time dateTime="2023-05-15">May 15, 2023</time>
+                  </div>
+                  <CardTitle className="text-xl mb-2">Startup Pitch Competition</CardTitle>
+                  <CardDescription>
+                    Present your business idea to a panel of investors and industry experts for a chance to win funding.
+                  </CardDescription>
+                </CardContent>
+                <CardFooter className="p-6 pt-0">
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/programs">Register Now</Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+          <div className="flex justify-center">
+            <Button asChild>
+              <Link href="/programs" className="flex items-center">
+                View All Events
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Highlighted Projects Section */}
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Highlighted Projects</h2>
+              <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Discover some of the innovative projects developed through our incubation program.
+              </p>
+            </div>
+          </div>
+          <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3">
+            {[
+              {
+                title: "EcoSolutions",
+                description: "Sustainable products made from recycled materials.",
+                icon: <Lightbulb className="h-10 w-10 text-primary" />,
+              },
+              {
+                title: "HealthTech Connect",
+                description: "AI-powered healthcare monitoring system for remote patients.",
+                icon: <Users className="h-10 w-10 text-primary" />,
+              },
+              {
+                title: "AgriInnovate",
+                description: "Smart farming solutions for small-scale farmers.",
+                icon: <Rocket className="h-10 w-10 text-primary" />,
+              },
+            ].map((project, i) => (
+              <Card key={i} className="text-center">
+                <CardHeader>
+                  <div className="flex justify-center mb-4">{project.icon}</div>
+                  <CardTitle>{project.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base">{project.description}</CardDescription>
+                </CardContent>
+                <CardFooter className="flex justify-center">
+                  <Button variant="outline" asChild>
+                    <Link href="/portfolio">Learn More</Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+          <div className="flex justify-center">
+            <Button asChild>
+              <Link href="/portfolio" className="flex items-center">
+                View All Projects
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                Frequently Asked Questions
+              </h2>
+              <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Find answers to common questions about our programs and services.
+              </p>
+            </div>
+          </div>
+          <div className="mx-auto max-w-3xl py-12">
+            <Accordion type="single" collapsible className="w-full">
+              {[
+                {
+                  question: "Who can join the Innovation Center?",
+                  answer:
+                    "Our center is open to students, faculty, alumni, and community members with innovative ideas or startups at any stage of development.",
+                },
+                {
+                  question: "What resources do you provide for startups?",
+                  answer:
+                    "We offer mentorship, workspace, funding opportunities, networking events, workshops, and access to a community of like-minded entrepreneurs and industry experts.",
+                },
+                {
+                  question: "How long is the incubation program?",
+                  answer:
+                    "Our standard incubation program runs for 6 months, but we offer flexible options based on the needs and stage of your startup.",
+                },
+                {
+                  question: "Do you take equity in startups?",
+                  answer:
+                    "We have different programs with varying terms. Some programs may involve equity, while others are completely free. Details are provided during the application process.",
+                },
+                {
+                  question: "How can I apply for the incubation program?",
+                  answer:
+                    "You can apply through our website by filling out the application form on the Programs page. We review applications on a rolling basis.",
+                },
+              ].map((faq, i) => (
+                <AccordionItem key={i} value={`item-${i}`}>
+                  <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
+                  <AccordionContent>{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+          <div className="flex justify-center">
+            <Button asChild>
+              <Link href="/contact" className="flex items-center">
+                Have More Questions? Contact Us
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="space-y-2">
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                Ready to Turn Your Idea Into Reality?
+              </h2>
+              <p className="max-w-[900px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                Join our community of innovators and entrepreneurs today.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+              <Button size="lg" variant="secondary" asChild>
+                <Link href="/programs">Explore Programs</Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-transparent text-primary-foreground border-primary-foreground hover:bg-primary-foreground hover:text-primary"
+                asChild
+              >
+                <Link href="/contact">Contact Us</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
-  );
+  )
 }
