@@ -1,13 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button"
-import { products } from "@/data/Products";
+import { Button } from "@/components/ui/button";
+import { useProducts } from "@/data/Products"; // Updated import to use the hook
+
 import Modal from "@/components/Modal/PurchaseModal";
 import ProductCard from "@/components/ui/ProductCard";
-import Link from "next/link"
+import Link from "next/link";
 
 export default function Store() {
+  // Use the custom hook for products data
+  const { products, loading, error, refreshProducts } = useProducts();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -43,6 +47,83 @@ export default function Store() {
     // Send this data to backend
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        {/* Hero Section */}
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-purple-50 to-blue-50">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Startup Store
+                </h1>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Discover and support innovative products created by our
+                  startup community.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Loading State */}
+        <section className="container mx-auto p-4 my-8">
+          <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
+            Featured Products
+          </h2>
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <span className="ml-4 text-lg text-gray-600">
+              Loading products...
+            </span>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        {/* Hero Section */}
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-purple-50 to-blue-50">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Startup Store
+                </h1>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Discover and support innovative products created by our
+                  startup community.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Error State */}
+        <section className="container mx-auto p-4 my-8">
+          <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
+            Featured Products
+          </h2>
+          <div className="flex flex-col justify-center items-center py-20">
+            <div className="text-red-500 text-xl mb-4">
+              ⚠️ Failed to load products
+            </div>
+            <p className="text-gray-600 mb-4">Error: {error}</p>
+            <Button onClick={refreshProducts} variant="outline">
+              Try Again
+            </Button>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
@@ -64,20 +145,43 @@ export default function Store() {
 
       {/* Main Content */}
       <section className="container mx-auto p-4 my-8">
-        <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
-          Featured Products
-        </h2>
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-center text-gray-800 flex-1">
+            Featured Products
+          </h2>
+          <Button onClick={refreshProducts} variant="outline" size="sm">
+            Refresh
+          </Button>
+        </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onBuyNow={openModal}
-            />
-          ))}
-        </div>
+        {products.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onBuyNow={openModal}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex justify-center items-center py-20">
+            <div className="text-center">
+              <div className="text-gray-400 text-xl mb-4">📦</div>
+              <p className="text-gray-600">
+                No products available at the moment
+              </p>
+              <Button
+                onClick={refreshProducts}
+                variant="outline"
+                className="mt-4"
+              >
+                Refresh
+              </Button>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Modal */}
