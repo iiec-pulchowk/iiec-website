@@ -21,16 +21,27 @@ class User(UserBase):
         from_attributes = True
 
 
-class PostBase(BaseModel):
-    title: str
-    content: str
+class ProductBase(BaseModel):
+    name: str
+    description: str
+    price: float
+    image: Optional[str] = None
+    in_stock: bool = True
 
 
-class PostCreate(PostBase):
+class ProductCreate(ProductBase):
     pass
 
 
-class Post(PostBase):
+class ProductUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    image: Optional[str] = None
+    in_stock: Optional[bool] = None
+
+
+class Product(ProductBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
