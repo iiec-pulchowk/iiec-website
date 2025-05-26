@@ -313,7 +313,7 @@ export default function Contact() {
                           id="phone"
                           name="phone"
                           type="tel"
-                          placeholder="(123) 456-7890"
+                          placeholder="+977 9700000000"
                           required
                           value={formData.phone}
                           onChange={handleChange}
