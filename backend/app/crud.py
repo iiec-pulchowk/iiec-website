@@ -63,3 +63,93 @@ def delete_product(db: Session, product_id: int):
         db.delete(db_product)
         db.commit()
     return db_product
+
+
+# Project CRUD operations
+def get_project(db: Session, project_id: int):
+    return db.query(models.Project).filter(models.Project.id == project_id).first()
+
+
+def get_projects(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Project).offset(skip).limit(limit).all()
+
+
+def create_project(db: Session, project: schemas.ProjectCreate):
+    db_project = models.Project(
+        name=project.name,
+        description=project.description,
+        overview=project.overview,
+        main_image_url=project.main_image_url,
+        status=project.status
+    )
+    db.add(db_project)
+    db.commit()
+    db.refresh(db_project)
+    return db_project
+
+
+def update_project(db: Session, project_id: int, project_update: schemas.ProjectUpdate):
+    db_project = db.query(models.Project).filter(
+        models.Project.id == project_id).first()
+    if db_project:
+        update_data = project_update.dict(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(db_project, field, value)
+        db.commit()
+        db.refresh(db_project)
+    return db_project
+
+
+def delete_project(db: Session, project_id: int):
+    db_project = db.query(models.Project).filter(
+        models.Project.id == project_id).first()
+    if db_project:
+        db.delete(db_project)
+        db.commit()
+    return db_project
+
+
+# ProjectSection CRUD operations
+def get_project_section(db: Session, section_id: int):
+    return db.query(models.ProjectSection).filter(models.ProjectSection.id == section_id).first()
+
+
+def get_project_sections(db: Session, project_id: int = None, skip: int = 0, limit: int = 100):
+    query = db.query(models.ProjectSection)
+    if project_id:
+        query = query.filter(models.ProjectSection.project_id == project_id)
+    return query.offset(skip).limit(limit).all()
+
+
+def create_project_section(db: Session, section: schemas.ProjectSectionCreate):
+    db_section = models.ProjectSection(
+        project_id=section.project_id,
+        description=section.description,
+        details=section.details,
+        main_image_url=section.main_image_url
+    )
+    db.add(db_section)
+    db.commit()
+    db.refresh(db_section)
+    return db_section
+
+
+def update_project_section(db: Session, section_id: int, section_update: schemas.ProjectSectionUpdate):
+    db_section = db.query(models.ProjectSection).filter(
+        models.ProjectSection.id == section_id).first()
+    if db_section:
+        update_data = section_update.dict(exclude_unset=True)
+        for field, value in update_data.items():
+            setattr(db_section, field, value)
+        db.commit()
+        db.refresh(db_section)
+    return db_section
+
+
+def delete_project_section(db: Session, section_id: int):
+    db_section = db.query(models.ProjectSection).filter(
+        models.ProjectSection.id == section_id).first()
+    if db_section:
+        db.delete(db_section)
+        db.commit()
+    return db_section
