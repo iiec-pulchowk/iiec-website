@@ -1,10 +1,30 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { CalendarDays, ArrowRight, Lightbulb, Users, Rocket } from "lucide-react"
-import HeroAnimation from "@/components/hero-animation"
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  CalendarDays,
+  ArrowRight,
+  Lightbulb,
+  Users,
+  Rocket,
+} from "lucide-react";
+import HeroAnimation from "@/components/hero-animation";
+import Facilities from "@/components/about/Facilities";
+import UpcomingEventsSection from "@/components/events/upcommint-events-section";
 
 export default function Home() {
   return (
@@ -19,12 +39,13 @@ export default function Home() {
                   Empowering Innovators & Entrepreneurs
                 </h1>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                  We provide the resources, mentorship, and community to help turn your ideas into successful ventures.
+                  We provide the resources, mentorship, and community to help
+                  turn your ideas into successful ventures.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                 <Button asChild size="lg">
-                  <Link href="/programs">Explore Programs</Link>
+                  <Link href="/events">Explore Programs</Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild>
                   <Link href="/contact">Get in Touch</Link>
@@ -58,15 +79,18 @@ export default function Home() {
                   Message from Our Head
                 </h2>
                 <blockquote className="border-l-4 pl-4 italic text-muted-foreground">
-                  "Innovation is not just about new ideas; it's about creating value and impact. At our center, we're
-                  committed to nurturing the next generation of entrepreneurs who will shape our future."
+                  "Innovation is not just about new ideas; it's about creating
+                  value and impact. At our center, we're committed to nurturing
+                  the next generation of entrepreneurs who will shape our
+                  future."
                 </blockquote>
                 <p className="text-muted-foreground">
-                  Our Innovation Center was founded with a vision to create an ecosystem where ideas can flourish and
-                  entrepreneurs can thrive. We believe in the power of collaboration, mentorship, and continuous
-                  learning.
+                  Our Innovation Center was founded with a vision to create an
+                  ecosystem where ideas can flourish and entrepreneurs can
+                  thrive. We believe in the power of collaboration, mentorship,
+                  and continuous learning.
                 </p>
-                <p className="font-semibold">Asst. Prof. Kamal Darlami  </p>
+                <p className="font-semibold">Asst. Prof. Kamal Darlami </p>
               </div>
               <div>
                 <Button variant="outline" asChild>
@@ -78,51 +102,32 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Upcoming Events Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50">
+      {/* Facilities */}
+      <Facilities />
+
+      {/* Upcoming Events Section for Home Page */}
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Upcoming Events</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                Upcoming Events
+              </h2>
               <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Join us for workshops, seminars, and networking opportunities designed to help you grow.
+                Join us for workshops, seminars, and networking opportunities
+                designed to enhance your skill.
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <Card key={i} className="overflow-hidden">
-                <CardHeader className="p-0">
-                  <div className="relative h-[200px] w-full">
-                    <Image
-                      src={`/placeholder.svg?height=200&width=400&text=Event+${i}`}
-                      alt={`Event ${i}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="flex items-center text-sm text-muted-foreground mb-2">
-                    <CalendarDays className="mr-1 h-4 w-4" />
-                    <time dateTime="2023-05-15">May 15, 2023</time>
-                  </div>
-                  <CardTitle className="text-xl mb-2">Startup Pitch Competition</CardTitle>
-                  <CardDescription>
-                    Present your business idea to a panel of investors and industry experts for a chance to win funding.
-                  </CardDescription>
-                </CardContent>
-                <CardFooter className="p-6 pt-0">
-                  <Button variant="outline" className="w-full" asChild>
-                    <Link href="/programs">Register Now</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+            <UpcomingEventsSection
+              showHeader={false}
+              maxEvents={3} // Show only 3 events on home page
+              variant="compact" // Use compact layout
+              containerClass="container mx-auto px-4 py-16 bg-white" // Custom styling for home page
+            />
           <div className="flex justify-center">
             <Button asChild>
-              <Link href="/programs" className="flex items-center">
+              <Link href="/events" className="flex items-center">
                 View All Events
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -132,13 +137,16 @@ export default function Home() {
       </section>
 
       {/* Highlighted Projects Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Highlighted Projects</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                Highlighted Projects
+              </h2>
               <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Discover some of the innovative projects developed through our incubation program.
+                Discover some of the innovative projects developed through our
+                incubation program.
               </p>
             </div>
           </div>
@@ -146,12 +154,14 @@ export default function Home() {
             {[
               {
                 title: "EcoSolutions",
-                description: "Sustainable products made from recycled materials.",
+                description:
+                  "Sustainable products made from recycled materials.",
                 icon: <Lightbulb className="h-10 w-10 text-primary" />,
               },
               {
                 title: "HealthTech Connect",
-                description: "AI-powered healthcare monitoring system for remote patients.",
+                description:
+                  "AI-powered healthcare monitoring system for remote patients.",
                 icon: <Users className="h-10 w-10 text-primary" />,
               },
               {
@@ -166,7 +176,9 @@ export default function Home() {
                   <CardTitle>{project.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-base">{project.description}</CardDescription>
+                  <CardDescription className="text-base">
+                    {project.description}
+                  </CardDescription>
                 </CardContent>
                 <CardFooter className="flex justify-center">
                   <Button variant="outline" asChild>
@@ -188,7 +200,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50">
+      <section className="w-full py-12 md:py-24 lg:py-32 bg-white">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
@@ -196,7 +208,8 @@ export default function Home() {
                 Frequently Asked Questions
               </h2>
               <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Find answers to common questions about our programs and services.
+                Find answers to common questions about our programs and
+                services.
               </p>
             </div>
           </div>
@@ -230,7 +243,9 @@ export default function Home() {
                 },
               ].map((faq, i) => (
                 <AccordionItem key={i} value={`item-${i}`}>
-                  <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
+                  <AccordionTrigger className="text-left">
+                    {faq.question}
+                  </AccordionTrigger>
                   <AccordionContent>{faq.answer}</AccordionContent>
                 </AccordionItem>
               ))}
@@ -276,5 +291,5 @@ export default function Home() {
         </div>
       </section>
     </div>
-  )
+  );
 }
