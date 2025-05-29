@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/card";
 import { ChevronRight, Calendar, Eye } from "lucide-react";
 import {
-  projects,
-  project_sections,
+  useProjects,
+  useProjectSections,
   project_success_matrics,
 } from "@/data/Projects";
 
@@ -21,10 +21,20 @@ export default function ProjectsPage() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [hoveredCard, setHoveredCard] = useState(null);
 
+  // Use the API hooks from Projects.js
+  const {
+    projects,
+    loading: projectsLoading,
+    error: projectsError,
+  } = useProjects();
+  const {
+    sections,
+    loading: sectionsLoading,
+    error: sectionsError,
+  } = useProjectSections();
+
   const getProjectSections = (projectId) => {
-    return project_sections.filter(
-      (section) => section.project_id === projectId
-    );
+    return sections.filter((section) => section.projectId === projectId);
   };
 
   const getStatusColor = (status) => {
@@ -38,6 +48,78 @@ export default function ProjectsPage() {
       day: "numeric",
     });
   };
+
+  // Show loading state
+  if (projectsLoading || sectionsLoading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        {/* Hero Section */}
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-purple-50 to-blue-50">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Innovation Portfolio
+                </h1>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Discover the innovative projects and startups that have been
+                  developed through our incubation program.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Loading State */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="flex justify-center items-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading projects...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (projectsError || sectionsError) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        {/* Hero Section */}
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-purple-50 to-blue-50">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                  Innovation Portfolio
+                </h1>
+                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Discover the innovative projects and startups that have been
+                  developed through our incubation program.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Error State */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="flex justify-center items-center">
+            <div className="text-center">
+              <p className="text-red-600 mb-4">
+                Error loading projects: {projectsError || sectionsError}
+              </p>
+              <Button onClick={() => window.location.reload()}>
+                Try Again
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -60,67 +142,81 @@ export default function ProjectsPage() {
 
       {/* Projects Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          {projects.map((project) => (
-            <div
-              key={project.id}
-              className={`group relative bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 transition-all duration-500 hover:scale-105 hover:bg-white/15 cursor-pointer ${
-                hoveredCard === project.id
-                  ? "shadow-2xl shadow-gray-500/25"
-                  : "shadow-xl"
-              }`}
-              onMouseEnter={() => setHoveredCard(project.id)}
-              onMouseLeave={() => setHoveredCard(null)}
-              onClick={() => setSelectedProject(project)}
-            >
-              {/* Project Image */}
-              <div className="relative h-64 overflow-hidden">
-                <img
-                  src={project.main_image_url}
-                  alt={project.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div className="absolute top-4 right-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-semibold text-gray ${getStatusColor(
-                      project.status
-                    )}`}
-                  >
-                    {project.status}
-                  </span>
-                </div>
-              </div>
-
-              {/* Project Content */}
-              <div className="p-6">
-                <div className="flex items-center gap-2 text-gray-600 text-sm mb-3">
-                  <Calendar size={16} />
-                  {formatDate(project.created_at)}
-                </div>
-
-                <h3 className="text-2xl font-bold text-gray-700  mb-3 group-hover:text-gray-900 transition-colors">
-                  {project.name}
-                </h3>
-
-                <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-3">
-                  {project.description}
-                </p>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-gray-600 font-medium">
-                    <Eye size={16} />
-                    View Details
-                  </div>
-                  <ChevronRight
-                    size={20}
-                    className="text-gray-600 group-hover:text-gray-600 transition-colors transform group-hover:translate-x-1"
+        {projects.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-lg">
+              No projects available at the moment.
+            </p>
+            <p className="text-muted-foreground">
+              Check back soon for new projects!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className={`group relative bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 transition-all duration-500 hover:scale-105 hover:bg-white/15 cursor-pointer ${
+                  hoveredCard === project.id
+                    ? "shadow-2xl shadow-gray-500/25"
+                    : "shadow-xl"
+                }`}
+                onMouseEnter={() => setHoveredCard(project.id)}
+                onMouseLeave={() => setHoveredCard(null)}
+                onClick={() => setSelectedProject(project)}
+              >
+                {/* Project Image */}
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={
+                      project.mainImageUrl ||
+                      "/placeholder.svg?height=256&width=400&text=Project+Image"
+                    }
+                    alt={project.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute top-4 right-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold text-gray ${getStatusColor(
+                        project.status
+                      )}`}
+                    >
+                      {project.status}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Project Content */}
+                <div className="p-6">
+                  <div className="flex items-center gap-2 text-gray-600 text-sm mb-3">
+                    <Calendar size={16} />
+                    {formatDate(project.createdAt)}
+                  </div>
+
+                  <h3 className="text-2xl font-bold text-gray-700  mb-3 group-hover:text-gray-900 transition-colors">
+                    {project.name}
+                  </h3>
+
+                  <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-3">
+                    {project.description}
+                  </p>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-gray-600 font-medium">
+                      <Eye size={16} />
+                      View Details
+                    </div>
+                    <ChevronRight
+                      size={20}
+                      className="text-gray-600 group-hover:text-gray-600 transition-colors transform group-hover:translate-x-1"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Project Detail Modal */}
@@ -130,7 +226,10 @@ export default function ProjectsPage() {
             {/* Modal Header */}
             <div className="relative h-64 overflow-hidden rounded-t-2xl">
               <img
-                src={selectedProject.main_image_url}
+                src={
+                  selectedProject.mainImageUrl ||
+                  "/placeholder.svg?height=256&width=800&text=Project+Image"
+                }
                 alt={selectedProject.name}
                 className="w-full h-full object-cover"
               />
@@ -182,26 +281,35 @@ export default function ProjectsPage() {
                 <h3 className="text-2xl font-bold text-white mb-6">
                   Project Components
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {getProjectSections(selectedProject.id).map((section) => (
-                    <div
-                      key={section.id}
-                      className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors"
-                    >
-                      <img
-                        src={section.image_url}
-                        alt={section.title}
-                        className="w-full h-32 object-cover rounded-lg mb-4"
-                      />
-                      <h4 className="text-lg font-semibold text-white mb-3">
-                        {section.title}
-                      </h4>
-                      <p className="text-gray-300 text-sm leading-relaxed">
-                        {section.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                {getProjectSections(selectedProject.id).length === 0 ? (
+                  <p className="text-gray-400">
+                    No project components available.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {getProjectSections(selectedProject.id).map((section) => (
+                      <div
+                        key={section.id}
+                        className="bg-white/5 rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-colors"
+                      >
+                        <img
+                          src={
+                            section.imageUrl ||
+                            "/placeholder.svg?height=128&width=300&text=Section+Image"
+                          }
+                          alt={section.title}
+                          className="w-full h-32 object-cover rounded-lg mb-4"
+                        />
+                        <h4 className="text-lg font-semibold text-white mb-3">
+                          {section.title}
+                        </h4>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          {section.description}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Modal Footer */}
