@@ -23,7 +23,7 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 
 def get_product(db: Session, product_id: int):
-    return db.query(models.Product).filter(models.Product.product_id == product_id).first()
+    return db.query(models.Product).filter(models.Product.id == product_id).first()
 
 
 def get_products(db: Session, skip: int = 0, limit: int = 100):
@@ -124,6 +124,7 @@ def get_project_sections(db: Session, project_id: int = None, skip: int = 0, lim
 def create_project_section(db: Session, section: schemas.ProjectSectionCreate):
     db_section = models.ProjectSection(
         project_id=section.project_id,
+        title=section.title,
         description=section.description,
         details=section.details,
         main_image_url=section.main_image_url

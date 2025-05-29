@@ -47,6 +47,7 @@ class ProjectSection(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     project_id = Column(Integer, ForeignKey('projects.id'), nullable=False)
+    title = Column(String, nullable=False)
     description = Column(Text)
     details = Column(Text)
     main_image_url = Column(String)

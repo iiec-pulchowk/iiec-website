@@ -81,6 +81,7 @@ class Project(ProjectBase):
 
 class ProjectSectionBase(BaseModel):
     project_id: int
+    title: str
     description: Optional[str] = None
     details: Optional[str] = None
     main_image_url: Optional[str] = None
@@ -91,6 +92,7 @@ class ProjectSectionCreate(ProjectSectionBase):
 
 
 class ProjectSectionUpdate(BaseModel):
+    title: Optional[str] = None
     description: Optional[str] = None
     details: Optional[str] = None
     main_image_url: Optional[str] = None
