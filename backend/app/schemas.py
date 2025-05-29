@@ -23,7 +23,7 @@ class User(UserBase):
 
 class ProductBase(BaseModel):
     name: str
-    description: str
+    description: Optional[str] = None
     price: float
     image: Optional[str] = None
     in_stock: bool = True
@@ -42,6 +42,63 @@ class ProductUpdate(BaseModel):
 
 
 class Product(ProductBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ProjectBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+    overview: Optional[str] = None
+    main_image_url: Optional[str] = None
+    status: str = 'upcoming'
+
+
+class ProjectCreate(ProjectBase):
+    pass
+
+
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    overview: Optional[str] = None
+    main_image_url: Optional[str] = None
+    status: Optional[str] = None
+
+
+class Project(ProjectBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class ProjectSectionBase(BaseModel):
+    project_id: int
+    title: str
+    description: Optional[str] = None
+    details: Optional[str] = None
+    main_image_url: Optional[str] = None
+
+
+class ProjectSectionCreate(ProjectSectionBase):
+    pass
+
+
+class ProjectSectionUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    details: Optional[str] = None
+    main_image_url: Optional[str] = None
+
+
+class ProjectSection(ProjectSectionBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None

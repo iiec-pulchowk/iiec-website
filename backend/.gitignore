@@ -37,3 +37,13 @@ next-env.d.ts
 
 
 .env
+
+.venv
+venv
+/venv
+*/venv
+app/__pycache__
+*/__pycache__
+__pycache__
+app/routers/__pycache__
+**/__pycache__
