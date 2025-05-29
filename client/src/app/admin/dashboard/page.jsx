@@ -833,16 +833,16 @@ const ItemList = ({
                               )}
                             </button>
                             <div>
-                              <div className="text-sm font-medium text-gray-900">
+                              <div className="text-sm font-medium text-gray-900 truncate max-w-xs">
                                 {item.name}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-sm text-gray-500 truncate max-w-xs ">
                                 {item.description}
                               </div>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 truncate max-w-xs">
                           {item.overview || "No overview provided"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -861,7 +861,7 @@ const ItemList = ({
                     )}
                     {type === "events" && (
                       <>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap truncate max-w-xs">
                           <div>
                             <div className="text-sm font-medium text-gray-900">
                               {item.title}
@@ -891,7 +891,7 @@ const ItemList = ({
                     )}
                     {type === "notices" && (
                       <>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap truncate max-w-xs">
                           <div>
                             <div className="text-sm font-medium text-gray-900">
                               {item.title}
@@ -927,7 +927,7 @@ const ItemList = ({
                     )}
                     {type === "products" && (
                       <>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-6 py-4 whitespace-nowrap truncate max-w-xs">
                           <div>
                             <div className="text-sm font-medium text-gray-900">
                               {item.name}
@@ -958,7 +958,7 @@ const ItemList = ({
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          ${item.price.toFixed(2)}
+                          {item.price.toFixed(2)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           <div className="flex items-center">
@@ -1199,7 +1199,7 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
               />
             </div>
 
-            <div>
+            <div className="max-w-md">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Description
               </label>
