@@ -45,27 +45,27 @@ export const events = [
     imageUrl: "/placeholder.svg",
   },
 
-  // {
-  //   id: "5",
-  //   title: "3D Design Workshop",
-  //   date: "2025-08-15",
-  //   time: "09:00 AM",
-  //   location: "IIEC Meeting Hall, Pulchowk campus",
-  //   description:
-  //     "Laboris sint veniam exercitation nulla aliquip ea excepteur exercitation voluptate fugiat magna fugiat tempor. Minim Lorem dolore eu ipsum sint nulla ad do ut dolore est aute id et. Nisi sit aute ut aliqua veniam Lorem anim Lorem incididunt aliqua dolor in ullamco. Ipsum sunt consectetur ad consectetur est aute laborum sit enim nulla voluptate consequat ut ut. Non velit est duis anim in ea ad ut ipsum aliqua officia. Laboris pariatur sunt cupidatat Lorem ea qui aliquip voluptate non esse officia dolore. Sint eiusmod exercitation minim aliqua exercitation veniam cupidatat reprehenderit incididunt.",
-  //   url: "https://openprocessing.org/sketch/1015776/",
-  //   imageUrl: "/placeholder.svg",
-  // },
+  {
+    id: "5",
+    title: "3D Design Workshop",
+    date: "2025-08-15",
+    time: "09:00 AM",
+    location: "IIEC Meeting Hall, Pulchowk campus",
+    description:
+      "Laboris sint veniam exercitation nulla aliquip ea excepteur exercitation voluptate fugiat magna fugiat tempor. Minim Lorem dolore eu ipsum sint nulla ad do ut dolore est aute id et. Nisi sit aute ut aliqua veniam Lorem anim Lorem incididunt aliqua dolor in ullamco. Ipsum sunt consectetur ad consectetur est aute laborum sit enim nulla voluptate consequat ut ut. Non velit est duis anim in ea ad ut ipsum aliqua officia. Laboris pariatur sunt cupidatat Lorem ea qui aliquip voluptate non esse officia dolore. Sint eiusmod exercitation minim aliqua exercitation veniam cupidatat reprehenderit incididunt.",
+    url: "https://openprocessing.org/sketch/1015776/",
+    imageUrl: "/placeholder.svg",
+  },
 
-  // {
-  //   id: "6",
-  //   title: "3D Design Workshop",
-  //   date: "2025-08-15",
-  //   time: "09:00 AM",
-  //   location: "IIEC Meeting Hall, Pulchowk campus",
-  //   description:
-  //     "Laboris sint veniam exercitation nulla aliquip ea excepteur exercitation voluptate fugiat magna fugiat tempor. Minim Lorem dolore eu ipsum sint nulla ad do ut dolore est aute id et. Nisi sit aute ut aliqua veniam Lorem anim Lorem incididunt aliqua dolor in ullamco. Ipsum sunt consectetur ad consectetur est aute laborum sit enim nulla voluptate consequat ut ut. Non velit est duis anim in ea ad ut ipsum aliqua officia. Laboris pariatur sunt cupidatat Lorem ea qui aliquip voluptate non esse officia dolore. Sint eiusmod exercitation minim aliqua exercitation veniam cupidatat reprehenderit incididunt.",
-  //   url: "https://openprocessing.org/sketch/1015776/",
-  //   imageUrl: "/placeholder.svg",
-  // },
+  {
+    id: "6",
+    title: "3D Design Workshop",
+    date: "2025-08-15",
+    time: "09:00 AM",
+    location: "IIEC Meeting Hall, Pulchowk campus",
+    description:
+      "Laboris sint veniam exercitation nulla aliquip ea excepteur exercitation voluptate fugiat magna fugiat tempor. Minim Lorem dolore eu ipsum sint nulla ad do ut dolore est aute id et. Nisi sit aute ut aliqua veniam Lorem anim Lorem incididunt aliqua dolor in ullamco. Ipsum sunt consectetur ad consectetur est aute laborum sit enim nulla voluptate consequat ut ut. Non velit est duis anim in ea ad ut ipsum aliqua officia. Laboris pariatur sunt cupidatat Lorem ea qui aliquip voluptate non esse officia dolore. Sint eiusmod exercitation minim aliqua exercitation veniam cupidatat reprehenderit incididunt.",
+    url: "https://openprocessing.org/sketch/1015776/",
+    imageUrl: "/placeholder.svg",
+  },
 ];

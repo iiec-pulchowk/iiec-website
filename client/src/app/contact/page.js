@@ -159,17 +159,20 @@ export default function Contact() {
                 </div>
               </div>
 
-              <div className="relative h-[300px] w-full overflow-hidden rounded-lg">
-                <div className="container max-w-md mx-auto">
-                  <div className="relative w-full h-196 rounded-xl overflow-hidden shadow-lg">
-                    <iframe
-                      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d991.381915633584!2d85.31976412851584!3d27.683553398506085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19006138c731%3A0x515ac1c075e3654c!2sSEDS%20Pulchowk!5e1!3m2!1sen!2snp!4v1737654176228!5m2!1sen!2snp"
-                      width="600"
-                      height="500"
-                      allowfullscreen=""
-                      loading="lazy"
-                      referrerpolicy="no-referrer-when-downgrade"
-                    />
+              {/* Google Map */}
+              <div className="relative w-full overflow-hidden rounded-lg">
+                <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="relative w-full">
+                    <div className="relative w-full h-0 pb-[75%] sm:pb-[56.25%] rounded-xl overflow-hidden shadow-lg">
+                      <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d991.381915633584!2d85.31976412851584!3d27.683553398506085!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb19006138c731%3A0x515ac1c075e3654c!2sSEDS%20Pulchowk!5e1!3m2!1sen!2snp!4v1737654176228!5m2!1sen!2snp"
+                        className="absolute top-0 left-0 w-full h-full border-0"
+                        allowFullScreen=""
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        title="SEDS Pulchowk Location Map"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
