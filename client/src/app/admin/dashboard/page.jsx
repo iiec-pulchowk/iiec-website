@@ -72,10 +72,15 @@ const AdminDashboard = () => {
             // Transform backend data to match our frontend structure
             const transformedData = data.map((project) => ({
               ...project,
-              mainImageUrl: project.main_image_url || null,
+              mainImageUrl: project.main_image_url || null, // For project's main image
               createdAt: project.created_at,
               updatedAt: project.updated_at,
-              sections: project.sections || [],
+              // Map sections and their image URLs
+              sections: (project.sections || []).map((sec) => ({
+                ...sec,
+                imageUrl: sec.main_image_url || null, // Map main_image_url to imageUrl
+                // project_id is already part of sec from backend
+              })),
             }));
             setProjects(transformedData);
           } catch (err) {
@@ -206,14 +211,15 @@ const AdminDashboard = () => {
             : `${API_BASE}/projects/`;
 
           // Transform frontend data to match backend structure
-          const projectData = {
+          const projectPayload = {
+            // Renamed to avoid conflict with projectData in outer scope
             ...item,
             main_image_url: item.mainImageUrl || null,
           };
-          delete projectData.mainImageUrl;
-          delete projectData.sections;
-          delete projectData.createdAt;
-          delete projectData.updatedAt;
+          delete projectPayload.mainImageUrl; // Remove frontend-specific key
+          delete projectPayload.sections; // Sections are managed separately
+          delete projectPayload.createdAt;
+          delete projectPayload.updatedAt;
 
           try {
             response = await fetch(url, {
@@ -221,7 +227,7 @@ const AdminDashboard = () => {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(projectData),
+              body: JSON.stringify(projectPayload), // Use renamed payload
             });
 
             if (!response.ok) {
@@ -229,12 +235,21 @@ const AdminDashboard = () => {
             }
 
             const savedItem = await response.json();
+            // When a project is saved, its sections should ideally be re-fetched or updated if the backend returns them.
+            // For now, we preserve existing sections on the frontend or rely on a full re-fetch if needed.
+            // The backend GET /projects/{id} should return sections if properly configured.
             const transformedItem = {
               ...savedItem,
               mainImageUrl: savedItem.main_image_url || null,
               createdAt: savedItem.created_at,
               updatedAt: savedItem.updated_at,
-              sections: editingItem?.sections || [],
+              // If backend sends sections with project after save, map them here too
+              sections: (savedItem.sections || editingItem?.sections || []).map(
+                (sec) => ({
+                  ...sec,
+                  imageUrl: sec.main_image_url || null,
+                })
+              ),
             };
 
             if (editingItem) {
@@ -503,18 +518,22 @@ const AdminDashboard = () => {
       const method = editingSection ? "PUT" : "POST";
       let url;
 
-      // Transform frontend data to match backend structure
+      // Transform frontend data to match backend structure for sections
       const apiData = {
-        ...sectionData,
-        project_id: selectedProjectId,
-        image_url: sectionData.imageUrl || null,
+        ...sectionData, // Includes title, description, details
+        project_id: selectedProjectId, // Ensure project_id is correctly set
+        main_image_url: sectionData.imageUrl || null, // Map imageUrl to main_image_url
       };
-      delete apiData.imageUrl;
+      delete apiData.imageUrl; // Remove frontend-specific key
+      delete apiData.id; // Remove id if it's a new section, backend will assign
+      if (editingSection) {
+        delete apiData.project_id; // project_id is not usually updatable or part of update payload for existing section
+      }
 
       if (editingSection) {
-        url = `${API_BASE}/project-sections/${editingSection.id}`;
+        url = `${API_BASE}/projects/sections/${editingSection.id}`;
       } else {
-        url = `${API_BASE}/project-sections/`;
+        url = `${API_BASE}/projects/${selectedProjectId}/sections`;
       }
 
       try {
@@ -527,16 +546,19 @@ const AdminDashboard = () => {
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          const errorBody = await response.text();
+          console.error("Save section error response:", errorBody);
+          throw new Error(
+            `HTTP error! status: ${response.status}. ${errorBody}`
+          );
         }
 
         const savedSection = await response.json();
         const transformedSection = {
           ...savedSection,
-          projectId: savedSection.project_id,
-          imageUrl: savedSection.image_url || null,
-          createdAt: savedSection.created_at,
-          updatedAt: savedSection.updated_at,
+          projectId: savedSection.project_id, // Ensure this comes from backend
+          imageUrl: savedSection.main_image_url || null, // Map back for frontend state
+          // createdAt and updatedAt should come from backend
         };
 
         // Update the projects state with the new/updated section
@@ -596,19 +618,23 @@ const AdminDashboard = () => {
     setLoading(true);
     setError(null);
     try {
+      const url = `${API_BASE}/projects/sections/${sectionId}`; // Corrected URL
       try {
-        const response = await fetch(
-          `${API_BASE}/project-sections/${sectionId}`,
-          {
-            method: "DELETE",
-          }
-        );
+        const response = await fetch(url, {
+          // Use corrected URL
+          method: "DELETE",
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       } catch (err) {
-        console.error("API call failed, using mock behavior:", err);
+        console.error(
+          "API call failed for delete section, using mock behavior:",
+          err
+        );
+        // If API fails, we might still want to update UI optimistically or show error
+        // For now, if API fails, the UI won't change unless we force it like below
       }
 
       // Update the projects state to remove the section

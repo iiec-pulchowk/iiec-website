@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from . import models, schemas
 
 
@@ -67,11 +67,11 @@ def delete_product(db: Session, product_id: int):
 
 # Project CRUD operations
 def get_project(db: Session, project_id: int):
-    return db.query(models.Project).filter(models.Project.id == project_id).first()
+    return db.query(models.Project).options(selectinload(models.Project.sections)).filter(models.Project.id == project_id).first()
 
 
 def get_projects(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Project).offset(skip).limit(limit).all()
+    return db.query(models.Project).options(selectinload(models.Project.sections)).offset(skip).limit(limit).all()
 
 
 def create_project(db: Session, project: schemas.ProjectCreate):
@@ -140,8 +140,15 @@ def update_project_section(db: Session, section_id: int, section_update: schemas
         models.ProjectSection.id == section_id).first()
     if db_section:
         update_data = section_update.dict(exclude_unset=True)
+        # Ensure main_image_url is correctly handled if present in update_data
+        if 'main_image_url' in update_data:
+            setattr(db_section, 'main_image_url',
+                    update_data['main_image_url'])
+
         for field, value in update_data.items():
-            setattr(db_section, field, value)
+            # Avoid trying to set main_image_url again if already handled or other fields
+            if hasattr(db_section, field):  # Check if attribute exists
+                setattr(db_section, field, value)
         db.commit()
         db.refresh(db_section)
     return db_section
