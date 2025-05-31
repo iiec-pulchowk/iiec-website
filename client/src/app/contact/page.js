@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,10 +22,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import emailjs from "@emailjs/browser";
 
 export default function Contact() {
+  const form = useRef();
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
@@ -36,6 +38,7 @@ export default function Contact() {
     inquiryType: "general",
     preferredContact: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,26 +53,61 @@ export default function Contact() {
     setFormData((prev) => ({ ...prev, inquiryType: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setIsSubmitting(true);
+    try {
+      // Prepare template parameters with all form data
+      const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+        inquiryType: formData.inquiryType,
+        preferredContact: formData.preferredContact,
+        time: new Date().toLocaleString(), // Add timestamp
+      };
 
-    // Show success toast
-    toast({
-      title: "Message Sent",
-      description: "Thank you for your message. We'll get back to you soon!",
-    });
+      // Send email using EmailJS with template parameters
+      const result = await emailjs.send(
+        "service_npqrp5l",
+        "template_808lrnn",
+        templateParams,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+      );
 
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-      inquiryType: "general",
-      preferredContact: "",
-    });
+      console.log("Email sent successfully:", result.text);
+
+      // Show success toast
+      toast({
+        title: "Message Sent Successfully!",
+        description: "Thank you for your message. We'll get back to you soon!",
+        variant: "default",
+      });
+
+      // Reset form after successful submission
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+        inquiryType: "general",
+        preferredContact: "",
+      });
+    } catch (error) {
+      console.error("Email sending failed:", error);
+
+      // Show error toast
+      toast({
+        title: "Failed to Send Message",
+        description:
+          "Something went wrong. Please try again or contact us directly.",
+        variant: "destructive", // or "error" if your toast supports it
+      });
+    }
+    setIsSubmitting(false);
   };
 
   return (
@@ -282,7 +320,11 @@ export default function Contact() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-4">
+                  <form
+                    ref={form}
+                    onSubmit={handleSubmit}
+                    className="space-y-4"
+                  >
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="name">Full Name</Label>
@@ -405,9 +447,26 @@ export default function Contact() {
                       />
                     </div>
 
-                    <Button type="submit" className="w-full">
+                    {/* <Button type="submit" className="w-full">
                       <Send className="mr-2 h-4 w-4" />
                       Send Message
+                    </Button> */}
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="mr-2 h-4 w-4" />
+                          Send Message
+                        </>
+                      )}
                     </Button>
                   </form>
                 </CardContent>
