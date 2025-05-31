@@ -1,6 +1,6 @@
 "use client"; // Mark as a Client Component
 import EventCard from "@/components/events/event-card";
-import UpcomingEventsSection from "@/components/events/upcommint-events-section";
+import UpcomingEventsSection from "@/components/events/upcomingEventsSection";
 import { useEvents } from "@/data/Events"; // Import the useEvents hook
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

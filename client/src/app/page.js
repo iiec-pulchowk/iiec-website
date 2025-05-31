@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import HeroAnimation from "@/components/hero-animation";
 import Facilities from "@/components/about/Facilities";
-import UpcomingEventsSection from "@/components/events/upcommint-events-section";
+import UpcomingEventsSection from "@/components/events/upcomingEventsSection";
 
 export default function Home() {
   return (
