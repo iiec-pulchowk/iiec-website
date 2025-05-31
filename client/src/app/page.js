@@ -119,12 +119,12 @@ export default function Home() {
               </p>
             </div>
           </div>
-            <UpcomingEventsSection
-              showHeader={false}
-              maxEvents={3} // Show only 3 events on home page
-              variant="compact" // Use compact layout
-              containerClass="container mx-auto px-4 py-16 bg-white" // Custom styling for home page
-            />
+          <UpcomingEventsSection
+            showHeader={false}
+            maxEvents={3} // Show only 3 events on home page
+            variant="compact" // Use compact layout
+            containerClass="container mx-auto px-4 py-16 bg-white" // Custom styling for home page
+          />
           <div className="flex justify-center">
             <Button asChild>
               <Link href="/events" className="flex items-center">

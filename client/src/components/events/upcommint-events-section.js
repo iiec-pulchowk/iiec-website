@@ -1,8 +1,9 @@
+"use client"; // Mark as a Client Component
 import EventCard from "@/components/events/event-card";
-import { events } from "@/data/Events";
+import { useEvents } from "@/data/Events"; // Import the useEvents hook
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Calendar, Users } from "lucide-react";
+import { Calendar, Users, AlertTriangle, Loader2 } from "lucide-react"; // Added AlertTriangle and Loader2
 
 export default function UpcomingEventsSection({
   showHeader = true,
@@ -10,9 +11,76 @@ export default function UpcomingEventsSection({
   containerClass = "container mx-auto px-4 py-12 mb-8",
   variant = "default",
 }) {
-  const today = new Date();
+  const { events: allEvents, loading, error } = useEvents(); // Use the hook
 
-  let upcomingEvents = events.filter((event) => new Date(event.date) >= today);
+  if (loading) {
+    return (
+      <section className={containerClass}>
+        {showHeader && (
+          <div className="flex items-center gap-3 mb-8">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-purple-100">
+              <Calendar className="h-6 w-6 text-gray-600" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">
+                Upcoming Events
+              </h2>
+              <p className="text-gray-600 mt-1">
+                Don't miss out on these exciting opportunities
+              </p>
+            </div>
+          </div>
+        )}
+        <div className="flex flex-col items-center justify-center py-16">
+          <Loader2 className="h-12 w-12 animate-spin text-purple-600" />
+          <p className="mt-4 text-gray-600 text-lg">
+            Loading upcoming events...
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className={containerClass}>
+        {showHeader && (
+          <div className="flex items-center gap-3 mb-8">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-purple-100">
+              <Calendar className="h-6 w-6 text-gray-600" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">
+                Upcoming Events
+              </h2>
+              <p className="text-gray-600 mt-1">
+                Don't miss out on these exciting opportunities
+              </p>
+            </div>
+          </div>
+        )}
+        <div className="flex flex-col items-center justify-center py-16 bg-red-50 p-6 rounded-lg border border-red-200">
+          <AlertTriangle className="h-12 w-12 text-red-500" />
+          <p className="mt-4 text-red-700 text-lg font-semibold">
+            Could not load upcoming events.
+          </p>
+          <p className="text-red-600">{error}</p>
+        </div>
+      </section>
+    );
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
+
+  let upcomingEvents = allEvents.filter((event) => {
+    const eventDate = new Date(event.date);
+    eventDate.setHours(0, 0, 0, 0); // Normalize event date
+    return eventDate >= today;
+  });
+
+  // Sort upcoming events by date, soonest first
+  upcomingEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
 
   // Limit events if maxEvents is specified
   if (maxEvents) {

@@ -1,10 +1,20 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import DashboardHeader from "@/components/admin/dashboard/DashboardHeader";
-import DashboardNav from "@/components/admin/dashboard/DashboardNav";
-import ItemList from "@/components/admin/dashboard/ItemList";
-import ItemForm from "@/components/admin/dashboard/ItemForm";
-import ProjectSectionForm from "@/components/admin/dashboard/ProjectSectionForm";
+import {
+  Plus, // Keep Plus for DashboardHeader via onAddNew
+  // Edit, Trash2, Save, X, Calendar, Bell, ShoppingCart, Upload, Check, XIcon, ImageIcon, Link, FolderOpen, ChevronDown, ChevronRight
+  // These icons are likely used by child components, review if they can be removed from here.
+  // For now, keeping them to avoid breaking anything if they are indirectly used or planned for direct use.
+  // Minimal necessary imports if child components handle their own icons:
+  // Plus (for DashboardHeader's Add New button, though DashboardHeader imports it too)
+} from "lucide-react";
+
+// Import modular components
+import DashboardHeader from "../../../components/admin/dashboard/DashboardHeader";
+import DashboardNav from "../../../components/admin/dashboard/DashboardNav";
+import ItemList from "../../../components/admin/dashboard/ItemList";
+import ItemForm from "../../../components/admin/dashboard/ItemForm";
+import ProjectSectionForm from "../../../components/admin/dashboard/ProjectSectionForm";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("projects");
@@ -24,20 +34,26 @@ const AdminDashboard = () => {
   // Update API URL to match your FastAPI backend
   const API_BASE = "http://localhost:8080";
 
-  useEffect(() => {
-    fetchData();
-  }, [activeTab]);
-
-  // Handle tab change and clear form state
-  const handleTabChange = (newTab) => {
-    // Clear all form-related state when switching tabs
-    setActiveTab(newTab);
-    setShowForm(false);
-    setEditingItem(null);
-    setShowSectionForm(false);
-    setEditingSection(null);
-    setSelectedProjectId(null);
+  // Function to calculate status, can be moved to a utility file if used elsewhere
+  const getEventStatus = (eventDateStr) => {
+    if (!eventDateStr) return "upcoming"; // Default if date is not set
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const eventDate = new Date(eventDateStr);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate >= today ? "upcoming" : "past";
   };
+
+  useEffect(() => {
+    // Reset form states when tab changes
+    setEditingItem(null);
+    setShowForm(false);
+    setEditingSection(null);
+    setShowSectionForm(false);
+    setSelectedProjectId(null);
+
+    fetchData();
+  }, [activeTab]); // Add fetchData to dependency array if it's not already, ensure it's memoized with useCallback
 
   // Fetch data based on active tab
   const fetchData = useCallback(async () => {
@@ -99,33 +115,50 @@ const AdminDashboard = () => {
           }
           break;
         case "events":
-          // Replace with API call if available, using mock data for now
-          setEvents([
-            {
-              id: 1,
-              title: "Annual Conference 2025",
-              description: "Join us for our biggest event of the year",
-              date: "2025-06-15",
-              time: "09:00",
-              location: "Convention Center",
-              image: null, // Or imageUrl: ""
-              status: "upcoming",
-            },
-          ]);
-          break;
-        case "notices":
-          // Replace with API call if available, using mock data for now
-          setNotices([
-            {
-              id: 1,
-              title: "Important Update",
-              content: "Please note the new office hours starting next week",
-              priority: "high",
-              publishDate: "2025-05-20",
-              expiryDate: "2025-06-20",
-              status: "active",
-            },
-          ]);
+          try {
+            response = await fetch(`${API_BASE}/events`);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            const transformedData = data.map((event) => ({
+              ...event,
+              status: getEventStatus(event.date), // Calculate status
+            }));
+            setEvents(transformedData);
+          } catch (err) {
+            console.error("Events API not available, using mock data:", err);
+            const mockEventsData = [
+              {
+                id: 1,
+                title: "Annual Conference 2025 (Mock)",
+                description: "Join us for our biggest event of the year",
+                date: "2025-06-15",
+                time: "09:00",
+                location: "Convention Center",
+                imageUrl: null,
+                url: "https://example.com/conference",
+                // status: "upcoming", // Status will be calculated
+              },
+              {
+                id: 2,
+                title: "Past Workshop (Mock)",
+                description: "A workshop that already happened.",
+                date: "2023-01-10",
+                time: "14:00",
+                location: "Online",
+                imageUrl: null,
+                url: "https://example.com/past-workshop",
+                // status: "past", // Status will be calculated
+              },
+            ];
+            setEvents(
+              mockEventsData.map((event) => ({
+                ...event,
+                status: getEventStatus(event.date),
+              }))
+            );
+          }
           break;
         case "products":
           try {
@@ -134,11 +167,10 @@ const AdminDashboard = () => {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            // Transform backend data to match our frontend structure
             const transformedData = data.map((product) => ({
               ...product,
-              inStock: product.in_stock !== undefined ? product.in_stock : true, // Ensure inStock is boolean
-              imageUrl: product.image || null, // Match frontend field name
+              inStock: product.in_stock !== undefined ? product.in_stock : true,
+              imageUrl: product.image || null,
             }));
             setProducts(transformedData);
           } catch (err) {
@@ -146,11 +178,8 @@ const AdminDashboard = () => {
               "Products API not available, using empty array:",
               err
             );
-            setProducts([]); // Default to empty if API fails
+            setProducts([]);
           }
-          break;
-        default:
-          // Optional: handle unknown tab or do nothing
           break;
       }
     } catch (err) {
@@ -159,7 +188,7 @@ const AdminDashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [activeTab, API_BASE]); // API_BASE dependency added
+  }, [activeTab, API_BASE]); // Removed getEventStatus from here, it's defined in component scope
 
   const handleSave = async (item, type) => {
     setLoading(true);
@@ -168,6 +197,7 @@ const AdminDashboard = () => {
       let response;
       const method = editingItem ? "PUT" : "POST";
       let url;
+      let itemData = { ...item }; // Clone item to avoid modifying original state object directly
 
       switch (type) {
         case "projects":
@@ -178,11 +208,10 @@ const AdminDashboard = () => {
           // Transform frontend data to match backend structure
           const projectData = {
             ...item,
-            main_image_url: item.mainImageUrl || null, // Match backend field name
+            main_image_url: item.mainImageUrl || null,
           };
-          // Remove fields not expected by backend or managed by it
           delete projectData.mainImageUrl;
-          delete projectData.sections; // Sections are managed separately
+          delete projectData.sections;
           delete projectData.createdAt;
           delete projectData.updatedAt;
 
@@ -200,13 +229,12 @@ const AdminDashboard = () => {
             }
 
             const savedItem = await response.json();
-            // Transform backend response to match frontend structure
             const transformedItem = {
               ...savedItem,
               mainImageUrl: savedItem.main_image_url || null,
-              createdAt: savedItem.created_at, // Ensure these are present
+              createdAt: savedItem.created_at,
               updatedAt: savedItem.updated_at,
-              sections: editingItem?.sections || [], // Preserve existing sections or initialize
+              sections: editingItem?.sections || [],
             };
 
             if (editingItem) {
@@ -218,13 +246,12 @@ const AdminDashboard = () => {
             }
           } catch (err) {
             console.error("API call failed, using mock behavior:", err);
-            // Fallback to mock behavior if API fails
             if (editingItem) {
               const updatedItem = {
                 ...item,
                 id: editingItem.id,
                 updatedAt: new Date().toISOString(),
-              }; // Ensure all fields are present
+              };
               setProjects((prev) =>
                 prev.map((p) => (p.id === editingItem.id ? updatedItem : p))
               );
@@ -235,33 +262,69 @@ const AdminDashboard = () => {
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
                 sections: [],
-              }; // Ensure all fields are present
+              };
               setProjects((prev) => [...prev, newItem]);
             }
           }
           break;
         case "events":
-          // Mock behavior for events, replace with API call
-          if (editingItem) {
-            const updatedItem = { ...item, id: editingItem.id };
-            setEvents((prev) =>
-              prev.map((e) => (e.id === editingItem.id ? updatedItem : e))
-            );
-          } else {
-            const newItem = { ...item, id: Date.now() };
-            setEvents((prev) => [...prev, newItem]);
+          url = editingItem
+            ? `${API_BASE}/events/${editingItem.id}`
+            : `${API_BASE}/events/`;
+
+          delete itemData.status; // Remove status before sending to backend
+          // Ensure date is in YYYY-MM-DD format if it's a Date object
+          if (itemData.date && typeof itemData.date !== "string") {
+            itemData.date = itemData.date.toISOString().split("T")[0];
           }
-          break;
-        case "notices":
-          // Mock behavior for notices, replace with API call
-          if (editingItem) {
-            const updatedItem = { ...item, id: editingItem.id };
-            setNotices((prev) =>
-              prev.map((n) => (n.id === editingItem.id ? updatedItem : n))
+
+          try {
+            response = await fetch(url, {
+              method: method,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(itemData), // itemData now excludes status
+            });
+            if (!response.ok) {
+              const errorBody = await response.text();
+              throw new Error(
+                `HTTP error! status: ${response.status}, body: ${errorBody}`
+              );
+            }
+            let savedItem = await response.json();
+            savedItem = {
+              ...savedItem,
+              status: getEventStatus(savedItem.date),
+            }; // Add calculated status to saved item
+
+            if (editingItem) {
+              setEvents((prev) =>
+                prev.map((e) => (e.id === editingItem.id ? savedItem : e))
+              );
+            } else {
+              setEvents((prev) => [...prev, savedItem]);
+            }
+          } catch (err) {
+            console.error("Events API call failed, using mock behavior:", err);
+            setError(
+              `Failed to save event (API error): ${err.message}. Using mock behavior.`
             );
-          } else {
-            const newItem = { ...item, id: Date.now() };
-            setNotices((prev) => [...prev, newItem]);
+            // Mock behavior as fallback
+            let mockSavedItem = {
+              ...itemData,
+              id: editingItem?.id || Date.now(),
+            };
+            mockSavedItem = {
+              ...mockSavedItem,
+              status: getEventStatus(mockSavedItem.date),
+            };
+
+            if (editingItem) {
+              setEvents((prev) =>
+                prev.map((e) => (e.id === editingItem.id ? mockSavedItem : e))
+              );
+            } else {
+              setEvents((prev) => [...prev, mockSavedItem]);
+            }
           }
           break;
         case "products":
@@ -269,14 +332,13 @@ const AdminDashboard = () => {
             ? `${API_BASE}/products/${editingItem.id}`
             : `${API_BASE}/products/`;
 
-          // Transform frontend data to match backend structure
           const productData = {
             ...item,
-            in_stock: item.inStock, // Match backend field name
-            image: item.imageUrl || null, // Match backend field name
+            in_stock: item.inStock,
+            image: item.imageUrl || null,
           };
-          delete productData.inStock; // Remove frontend-specific field name
-          delete productData.imageUrl; // Remove frontend-specific field name
+          delete productData.inStock;
+          delete productData.imageUrl;
 
           try {
             response = await fetch(url, {
@@ -292,7 +354,6 @@ const AdminDashboard = () => {
             }
 
             const savedItem = await response.json();
-            // Transform backend response to match frontend structure
             const transformedItem = {
               ...savedItem,
               inStock:
@@ -309,7 +370,6 @@ const AdminDashboard = () => {
             }
           } catch (err) {
             console.error("API call failed, using mock behavior:", err);
-            // Fallback to mock behavior if API fails
             if (editingItem) {
               const updatedItem = {
                 ...item,
@@ -328,9 +388,6 @@ const AdminDashboard = () => {
               setProducts((prev) => [...prev, newItem]);
             }
           }
-          break;
-        default:
-          // Optional: handle unknown type
           break;
       }
 
@@ -358,67 +415,55 @@ const AdminDashboard = () => {
             });
 
             if (!response.ok) {
-              // Check if response is JSON, if not, use text()
-              let errorMsg = `HTTP error! status: ${response.status}`;
-              try {
-                const errorData = await response.json();
-                errorMsg = errorData.detail || errorMsg;
-              } catch (e) {
-                // If not JSON, try to get text
-                errorMsg = (await response.text()) || errorMsg;
-              }
-              throw new Error(errorMsg);
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
-            // No content expected on successful DELETE, so no response.json()
+
             setProjects((prev) => prev.filter((p) => p.id !== id));
           } catch (err) {
             console.error("API call failed, using mock behavior:", err);
-            setError(`Failed to delete project. ${err.message}`);
-            // Fallback: remove from UI anyway or handle error display
             setProjects((prev) => prev.filter((p) => p.id !== id));
           }
           break;
         case "events":
-          // Mock behavior for events, replace with API call
-          setEvents((prev) => prev.filter((e) => e.id !== id));
-          break;
-        case "notices":
-          // Mock behavior for notices, replace with API call
-          setNotices((prev) => prev.filter((n) => n.id !== id));
+          try {
+            const response = await fetch(`${API_BASE}/events/${id}`, {
+              method: "DELETE",
+            });
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            setEvents((prev) => prev.filter((e) => e.id !== id));
+          } catch (err) {
+            console.error(
+              "Events API delete call failed, using mock behavior:",
+              err
+            );
+            setError(
+              `Failed to delete event (API error): ${err.message}. Using mock behavior.`
+            );
+            setEvents((prev) => prev.filter((e) => e.id !== id)); // Mock delete
+          }
           break;
         case "products":
           try {
             const response = await fetch(`${API_BASE}/products/${id}`, {
               method: "DELETE",
             });
+
             if (!response.ok) {
-              let errorMsg = `HTTP error! status: ${response.status}`;
-              try {
-                const errorData = await response.json();
-                errorMsg = errorData.detail || errorMsg;
-              } catch (e) {
-                errorMsg = (await response.text()) || errorMsg;
-              }
-              throw new Error(errorMsg);
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
+
             setProducts((prev) => prev.filter((p) => p.id !== id));
           } catch (err) {
             console.error("API call failed, using mock behavior:", err);
-            setError(`Failed to delete product. ${err.message}`);
             setProducts((prev) => prev.filter((p) => p.id !== id));
           }
-          break;
-        default:
-          // Optional: handle unknown type
           break;
       }
     } catch (error) {
       console.error("Error deleting item:", error);
-      // setError is already called in specific catch blocks if API fails
-      if (!error) {
-        // Set general error if not already set by API failure
-        setError(`Failed to delete ${type.slice(0, -1)}. ${error.message}`);
-      }
+      setError(`Failed to delete ${type.slice(0, -1)}. ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -427,35 +472,28 @@ const AdminDashboard = () => {
   const handleEdit = (item, type) => {
     setEditingItem(item);
     setShowForm(true);
-    setShowSectionForm(false); // Ensure section form is hidden
   };
 
   const handleAddNew = () => {
-    setEditingItem(null);
+    setEditingItem(null); // Ensure we're not editing when adding new
     setShowForm(true);
-    setShowSectionForm(false); // Ensure section form is hidden
   };
 
   const handleCancelForm = () => {
     setShowForm(false);
     setEditingItem(null);
-    setShowSectionForm(false);
-    setEditingSection(null);
-    setSelectedProjectId(null);
   };
 
   const handleAddSection = (projectId) => {
     setSelectedProjectId(projectId);
-    setEditingSection(null); // Clear any previous editing section
+    setEditingSection(null);
     setShowSectionForm(true);
-    setShowForm(false); // Hide main item form
   };
 
   const handleEditSection = (section, projectId) => {
     setSelectedProjectId(projectId);
     setEditingSection(section);
     setShowSectionForm(true);
-    setShowForm(false); // Hide main item form
   };
 
   const handleSaveSection = async (sectionData) => {
@@ -467,11 +505,11 @@ const AdminDashboard = () => {
 
       // Transform frontend data to match backend structure
       const apiData = {
-        ...sectionData, // Contains title, description, details, imageUrl
+        ...sectionData,
         project_id: selectedProjectId,
-        image_url: sectionData.imageUrl || null, // Match backend field name
+        image_url: sectionData.imageUrl || null,
       };
-      delete apiData.imageUrl; // Remove frontend-specific field name
+      delete apiData.imageUrl;
 
       if (editingSection) {
         url = `${API_BASE}/project-sections/${editingSection.id}`;
@@ -493,18 +531,17 @@ const AdminDashboard = () => {
         }
 
         const savedSection = await response.json();
-        // Transform backend response to match frontend structure
         const transformedSection = {
           ...savedSection,
-          projectId: savedSection.project_id, // Ensure this matches frontend if needed
+          projectId: savedSection.project_id,
           imageUrl: savedSection.image_url || null,
-          createdAt: savedSection.created_at, // Ensure these are present
+          createdAt: savedSection.created_at,
           updatedAt: savedSection.updated_at,
         };
 
         // Update the projects state with the new/updated section
-        setProjects((prevProjects) =>
-          prevProjects.map((project) => {
+        setProjects((prev) =>
+          prev.map((project) => {
             if (project.id === selectedProjectId) {
               const updatedSections = editingSection
                 ? (project.sections || []).map((s) =>
@@ -517,24 +554,24 @@ const AdminDashboard = () => {
           })
         );
       } catch (err) {
-        console.error("API call failed, using mock behavior for section:", err);
+        console.error("API call failed, using mock behavior:", err);
         // Fallback to mock behavior
-        const newOrUpdatedSection = {
+        const newSection = {
           ...sectionData,
           id: editingSection?.id || Date.now(),
           projectId: selectedProjectId,
-          createdAt: editingSection?.createdAt || new Date().toISOString(),
+          createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
 
-        setProjects((prevProjects) =>
-          prevProjects.map((project) => {
+        setProjects((prev) =>
+          prev.map((project) => {
             if (project.id === selectedProjectId) {
               const updatedSections = editingSection
                 ? (project.sections || []).map((s) =>
-                    s.id === editingSection.id ? newOrUpdatedSection : s
+                    s.id === editingSection.id ? newSection : s
                   )
-                : [...(project.sections || []), newOrUpdatedSection];
+                : [...(project.sections || []), newSection];
               return { ...project, sections: updatedSections };
             }
             return project;
@@ -570,18 +607,13 @@ const AdminDashboard = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        // No content expected on successful DELETE
       } catch (err) {
-        console.error(
-          "API call failed, using mock behavior for section deletion:",
-          err
-        );
-        // Continue with UI update even if API fails, or handle error appropriately
+        console.error("API call failed, using mock behavior:", err);
       }
 
       // Update the projects state to remove the section
-      setProjects((prevProjects) =>
-        prevProjects.map((project) => {
+      setProjects((prev) =>
+        prev.map((project) => {
           if (project.id === projectId) {
             return {
               ...project,
@@ -630,27 +662,15 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
       <DashboardHeader error={error} onAddNew={handleAddNew} />
-      <DashboardNav activeTab={activeTab} onTabChange={handleTabChange} />
 
+      {/* Navigation Tabs */}
+      <DashboardNav activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {showForm ? (
-          <ItemForm
-            type={activeTab}
-            item={editingItem}
-            onSave={handleSave}
-            onCancel={handleCancelForm}
-            loading={loading}
-          />
-        ) : showSectionForm ? (
-          <ProjectSectionForm
-            section={editingSection}
-            projectId={selectedProjectId}
-            onSave={handleSaveSection}
-            onCancel={handleCancelForm}
-            loading={loading}
-          />
-        ) : (
+        {!showForm && !showSectionForm ? (
           <ItemList
             items={getCurrentData()}
             type={activeTab}
@@ -662,6 +682,26 @@ const AdminDashboard = () => {
             onAddSection={handleAddSection}
             onEditSection={handleEditSection}
             onDeleteSection={handleDeleteSection}
+          />
+        ) : showSectionForm ? (
+          <ProjectSectionForm
+            section={editingSection}
+            projectId={selectedProjectId}
+            onSave={handleSaveSection}
+            onCancel={() => {
+              setShowSectionForm(false);
+              setEditingSection(null);
+              setSelectedProjectId(null);
+            }}
+            loading={loading}
+          />
+        ) : (
+          <ItemForm
+            type={activeTab}
+            item={editingItem}
+            onSave={handleSave}
+            onCancel={handleCancelForm}
+            loading={loading}
           />
         )}
       </div>

@@ -7,19 +7,23 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
-    // Set image preview if item has an image URL
-    if (item?.imageUrl || item?.mainImageUrl) {
-      setImagePreview(item.imageUrl || item.mainImageUrl);
-    } else {
-      setImagePreview(null);
-    }
-  }, [item]);
-
-  useEffect(() => {
     if (item) {
-      setFormData(item);
+      let currentFormData = { ...item };
+
+      setFormData(currentFormData);
+
+      // Set image preview based on the item type and its image field
+      if (type === "projects" && item.mainImageUrl) {
+        setImagePreview(item.mainImageUrl);
+      } else if ((type === "events" || type === "products") && item.imageUrl) {
+        setImagePreview(item.imageUrl);
+      } else {
+        setImagePreview(null);
+      }
     } else {
+      // Reset form for new item
       setFormData(getDefaultFormData(type));
+      setImagePreview(null); // Clear preview for new item
     }
   }, [item, type]);
 
@@ -30,27 +34,19 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
           name: "",
           description: "",
           overview: "",
-          mainImageUrl: "",
+          mainImageUrl: "", // Ensure this matches the field name used (mainImageUrl vs imageUrl)
           status: "active",
         };
       case "events":
         return {
           title: "",
           description: "",
-          date: "",
+          date: "", // Should be YYYY-MM-DD
           time: "",
           location: "",
-          image: null, // Or use imageUrl: "" if storing URL
-          status: "upcoming",
-        };
-      case "notices":
-        return {
-          title: "",
-          content: "",
-          priority: "medium",
-          publishDate: new Date().toISOString().split("T")[0], // Default to today
-          expiryDate: "",
-          status: "active",
+          imageUrl: "",
+          url: "",
+          // status: "upcoming", // Removed status from default form data
         };
       case "products":
         return {
@@ -227,7 +223,7 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
                         src={imagePreview || "/placeholder.svg"} // Fallback for broken links
                         alt="Preview"
                         className="h-32 w-32 object-cover rounded-lg border"
-                        onError={() => setImagePreview(null)} // Clear preview if image fails to load
+                        onError={() => setImagePreview("/placeholder.svg")} // Fallback to placeholder on error
                       />
                       <button
                         type="button"
@@ -304,13 +300,15 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {" "}
+              {/* Changed from md:grid-cols-3 */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Date
                 </label>
                 <input
-                  type="date"
+                  type="date" // HTML5 date input expects YYYY-MM-DD
                   value={formData.date}
                   onChange={(e) => handleChange("date", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -329,108 +327,125 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
                   required
                 />
               </div>
-              <div>
+              {/* Status Dropdown Removed */}
+              {/* <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Status
                 </label>
                 <select
-                  value={formData.status}
+                  value={formData.status || "upcoming"} 
                   onChange={(e) => handleChange("status", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="upcoming">Upcoming</option>
                   <option value="past">Past</option>
-                  <option value="cancelled">Cancelled</option>
                 </select>
-              </div>
+              </div> */}
             </div>
-            {/* Event Image Upload - Similar to Project Image */}
-          </>
-        )}
 
-        {type === "notices" && (
-          <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Notice Title
+                Registration/Event URL
               </label>
               <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => handleChange("title", e.target.value)}
+                type="url"
+                value={formData.url || ""}
+                onChange={(e) => handleChange("url", e.target.value)}
+                placeholder="https://example.com/register"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
               />
             </div>
 
+            {/* Event Image Upload - Similar to Project Image */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Content
+                Event Image
               </label>
-              <textarea
-                value={formData.content}
-                onChange={(e) => handleChange("content", e.target.value)}
-                rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
+              <div className="space-y-4">
+                <div className="flex space-x-4">
+                  <button
+                    type="button"
+                    onClick={() => setImageUploadType("url")}
+                    className={`px-3 py-2 text-sm font-medium rounded-md flex items-center space-x-2 ${
+                      imageUploadType === "url"
+                        ? "bg-blue-100 text-blue-700 border border-blue-300"
+                        : "bg-gray-100 text-gray-700 border border-gray-300"
+                    }`}
+                  >
+                    <LinkIcon size={16} />
+                    <span>URL</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setImageUploadType("file")}
+                    className={`px-3 py-2 text-sm font-medium rounded-md flex items-center space-x-2 ${
+                      imageUploadType === "file"
+                        ? "bg-blue-100 text-blue-700 border border-blue-300"
+                        : "bg-gray-100 text-gray-700 border border-gray-300"
+                    }`}
+                  >
+                    <Upload size={16} />
+                    <span>Upload</span>
+                  </button>
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Priority
-                </label>
-                <select
-                  value={formData.priority}
-                  onChange={(e) => handleChange("priority", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Publish Date
-                </label>
-                <input
-                  type="date"
-                  value={formData.publishDate}
-                  onChange={(e) => handleChange("publishDate", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Expiry Date
-                </label>
-                <input
-                  type="date"
-                  value={formData.expiryDate}
-                  onChange={(e) => handleChange("expiryDate", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Status
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => handleChange("status", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="draft">Draft</option>
-                </select>
+                {imageUploadType === "url" && (
+                  <div>
+                    <input
+                      type="url"
+                      placeholder="Enter image URL"
+                      value={formData.imageUrl || ""}
+                      onChange={(e) => handleImageUrlChange(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                )}
+
+                {imageUploadType === "file" && (
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e.target.files[0])}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Supported formats: JPG, PNG, GIF (Max 5MB)
+                    </p>
+                  </div>
+                )}
+
+                {imagePreview && (
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Preview
+                    </label>
+                    <div className="relative inline-block">
+                      <img
+                        src={imagePreview || "/placeholder.svg"}
+                        alt="Preview"
+                        className="h-32 w-32 object-cover rounded-lg border"
+                        onError={() => setImagePreview("/placeholder.svg")} // Fallback to placeholder on error
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setImagePreview(null);
+                          handleChange("imageUrl", "");
+                        }}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </>
         )}
+
+        
 
         {type === "products" && (
           <>
@@ -528,7 +543,7 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
                         src={imagePreview || "/placeholder.svg"}
                         alt="Preview"
                         className="h-32 w-32 object-cover rounded-lg border"
-                        onError={() => setImagePreview(null)}
+                        onError={() => setImagePreview("/placeholder.svg")} // Fallback to placeholder on error
                       />
                       <button
                         type="button"

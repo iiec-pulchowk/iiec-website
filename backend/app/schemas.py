@@ -105,3 +105,36 @@ class ProjectSection(ProjectSectionBase):
 
     class Config:
         from_attributes = True
+
+
+class EventBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    date: str  # Expects YYYY-MM-DD
+    time: str
+    location: str
+    url: Optional[str] = None
+    imageUrl: Optional[str] = None
+
+
+class EventCreate(EventBase):
+    pass
+
+
+class EventUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
+    location: Optional[str] = None
+    url: Optional[str] = None
+    imageUrl: Optional[str] = None
+
+
+class Event(EventBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
