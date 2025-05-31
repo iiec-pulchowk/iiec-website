@@ -2,29 +2,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  CalendarDays,
-  ArrowRight,
-  Lightbulb,
-  Users,
-  Rocket,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import HeroAnimation from "@/components/hero-animation";
 import Facilities from "@/components/about/Facilities";
 import UpcomingEventsSection from "@/components/events/upcommint-events-section";
+import Projects from "@/components/portfolio/Projects";
 
 export default function Home() {
   return (
@@ -119,12 +106,12 @@ export default function Home() {
               </p>
             </div>
           </div>
-            <UpcomingEventsSection
-              showHeader={false}
-              maxEvents={3} // Show only 3 events on home page
-              variant="compact" // Use compact layout
-              containerClass="container mx-auto px-4 py-16 bg-white" // Custom styling for home page
-            />
+          <UpcomingEventsSection
+            showHeader={false}
+            maxEvents={3} // Show only 3 events on home page
+            variant="compact" // Use compact layout
+            containerClass="container mx-auto px-4 py-16 bg-white" // Custom styling for home page
+          />
           <div className="flex justify-center">
             <Button asChild>
               <Link href="/events" className="flex items-center">
@@ -150,44 +137,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-3">
-            {[
-              {
-                title: "EcoSolutions",
-                description:
-                  "Sustainable products made from recycled materials.",
-                icon: <Lightbulb className="h-10 w-10 text-primary" />,
-              },
-              {
-                title: "HealthTech Connect",
-                description:
-                  "AI-powered healthcare monitoring system for remote patients.",
-                icon: <Users className="h-10 w-10 text-primary" />,
-              },
-              {
-                title: "AgriInnovate",
-                description: "Smart farming solutions for small-scale farmers.",
-                icon: <Rocket className="h-10 w-10 text-primary" />,
-              },
-            ].map((project, i) => (
-              <Card key={i} className="text-center">
-                <CardHeader>
-                  <div className="flex justify-center mb-4">{project.icon}</div>
-                  <CardTitle>{project.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base">
-                    {project.description}
-                  </CardDescription>
-                </CardContent>
-                <CardFooter className="flex justify-center">
-                  <Button variant="outline" asChild>
-                    <Link href="/portfolio">Learn More</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+            <Projects homePage={true} />
           <div className="flex justify-center">
             <Button asChild>
               <Link href="/portfolio" className="flex items-center">

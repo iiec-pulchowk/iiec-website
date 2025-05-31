@@ -43,68 +43,77 @@ export default function Projects({ homePage = false }) {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-            {projects.map((project) => (
-              <div
-                key={project.id}
-                className={`group relative bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 transition-all duration-500 hover:scale-105 hover:bg-white/15 cursor-pointer ${
-                  hoveredCard === project.id
-                    ? "shadow-2xl shadow-gray-500/25"
-                    : "shadow-xl"
-                }`}
-                onMouseEnter={() => setHoveredCard(project.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-                onClick={() => setSelectedProject(project)}
-              >
-                {/* Project Image */}
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={
-                      project.mainImageUrl ||
-                      "/placeholder.svg?height=256&width=400&text=Project+Image"
-                    }
-                    alt={project.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  <div className="absolute top-4 right-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold text-gray ${getStatusColor(
-                        project.status
-                      )}`}
-                    >
-                      {project.status}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Project Content */}
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-gray-600 text-sm mb-3">
-                    <Calendar size={16} />
-                    {formatDate(project.createdAt)}
-                  </div>
-
-                  <h3 className="text-2xl font-bold text-gray-700  mb-3 group-hover:text-gray-900 transition-colors">
-                    {project.name}
-                  </h3>
-
-                  <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-3">
-                    {project.description}
-                  </p>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-gray-600 font-medium">
-                      <Eye size={16} />
-                      View Details
-                    </div>
-                    <ChevronRight
-                      size={20}
-                      className="text-gray-600 group-hover:text-gray-600 transition-colors transform group-hover:translate-x-1"
+            {(homePage ? [...projects].reverse().slice(0, 3) : projects).map(
+              (project) => (
+                <div
+                  key={project.id}
+                  className={`group relative bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border border-white/20 transition-all duration-500 hover:scale-105 hover:bg-white/15 cursor-pointer ${
+                    hoveredCard === project.id
+                      ? "shadow-2xl shadow-gray-500/25"
+                      : "shadow-xl"
+                  }`}
+                  onMouseEnter={
+                    !homePage ? () => setHoveredCard(project.id) : undefined
+                  }
+                  onMouseLeave={
+                    !homePage ? () => setHoveredCard(null) : undefined
+                  }
+                  onClick={
+                    !homePage ? () => setSelectedProject(project) : undefined
+                  }
+                >
+                  {/* Project Image */}
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={
+                        project.mainImageUrl ||
+                        "/placeholder.svg?height=256&width=400&text=Project+Image"
+                      }
+                      alt={project.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div className="absolute top-4 right-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold text-gray ${getStatusColor(
+                          project.status
+                        )}`}
+                      >
+                        {project.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Project Content */}
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-gray-600 text-sm mb-3">
+                      <Calendar size={16} />
+                      {formatDate(project.createdAt)}
+                    </div>
+
+                    <h3 className="text-2xl font-bold text-gray-700  mb-3 group-hover:text-gray-900 transition-colors">
+                      {project.name}
+                    </h3>
+
+                    <p className="text-gray-700 text-sm leading-relaxed mb-4 line-clamp-3">
+                      {project.description}
+                    </p>
+                    {!homePage && (
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-gray-600 font-medium">
+                          <Eye size={16} />
+                          View Details
+                        </div>
+                        <ChevronRight
+                          size={20}
+                          className="text-gray-600 group-hover:text-gray-600 transition-colors transform group-hover:translate-x-1"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
         )}
       </div>
