@@ -1,13 +1,5 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  Plus, // Keep Plus for DashboardHeader via onAddNew
-  // Edit, Trash2, Save, X, Calendar, Bell, ShoppingCart, Upload, Check, XIcon, ImageIcon, Link, FolderOpen, ChevronDown, ChevronRight
-  // These icons are likely used by child components, review if they can be removed from here.
-  // For now, keeping them to avoid breaking anything if they are indirectly used or planned for direct use.
-  // Minimal necessary imports if child components handle their own icons:
-  // Plus (for DashboardHeader's Add New button, though DashboardHeader imports it too)
-} from "lucide-react";
 
 // Import modular components
 import DashboardHeader from "../../../components/admin/dashboard/DashboardHeader";
@@ -85,38 +77,6 @@ const AdminDashboard = () => {
             setProjects(transformedData);
           } catch (err) {
             console.error("Projects API not available, using mock data:", err);
-            setProjects([
-              {
-                id: 1,
-                name: "Website Redesign",
-                description: "Complete overhaul of company website",
-                overview:
-                  "A comprehensive redesign project to modernize our web presence",
-                mainImageUrl: null,
-                status: "active",
-                createdAt: "2025-01-15T10:00:00Z",
-                updatedAt: "2025-01-20T15:30:00Z",
-                sections: [
-                  {
-                    id: 1,
-                    projectId: 1,
-                    title: "Design Phase",
-                    description: "Create mockups and wireframes",
-                    details:
-                      "Detailed design specifications and user experience flow",
-                    imageUrl: null,
-                  },
-                  {
-                    id: 2,
-                    projectId: 1,
-                    title: "Development Phase",
-                    description: "Frontend and backend implementation",
-                    details: "Full stack development using modern technologies",
-                    imageUrl: null,
-                  },
-                ],
-              },
-            ]);
           }
           break;
         case "events":
@@ -133,30 +93,6 @@ const AdminDashboard = () => {
             setEvents(transformedData);
           } catch (err) {
             console.error("Events API not available, using mock data:", err);
-            const mockEventsData = [
-              {
-                id: 1,
-                title: "Annual Conference 2025 (Mock)",
-                description: "Join us for our biggest event of the year",
-                date: "2025-06-15",
-                time: "09:00",
-                location: "Convention Center",
-                imageUrl: null,
-                url: "https://example.com/conference",
-                // status: "upcoming", // Status will be calculated
-              },
-              {
-                id: 2,
-                title: "Past Workshop (Mock)",
-                description: "A workshop that already happened.",
-                date: "2023-01-10",
-                time: "14:00",
-                location: "Online",
-                imageUrl: null,
-                url: "https://example.com/past-workshop",
-                // status: "past", // Status will be calculated
-              },
-            ];
             setEvents(
               mockEventsData.map((event) => ({
                 ...event,

@@ -137,7 +137,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-            <Projects homePage={true} />
+          <Projects homePage={true} />
           <div className="flex justify-center">
             <Button asChild>
               <Link href="/portfolio" className="flex items-center">
