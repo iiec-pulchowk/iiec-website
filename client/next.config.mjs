@@ -8,6 +8,9 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   output: "standalone", // Use 'standalone' mode if deploying to a custom server
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;
