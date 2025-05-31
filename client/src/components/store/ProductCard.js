@@ -1,53 +1,6 @@
-// Product Card Component
-// export default function ProductCard({ product, onBuyNow }) {
-//   return (
-//     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:scale-105">
-//       <div className="h-48 bg-gray-200 relative">
-//         <img
-//           src={product.image}
-//           alt={product.name}
-//           className="w-full h-full object-cover"
-//         />
-//       </div>
-//       <div className="p-4">
-//         <h3 className="text-xl font-semibold mb-2 text-gray-800">
-//           {product.name}
-//         </h3>
-//         <p className="text-gray-600 mb-4 h-20 overflow-hidden">
-//           {product.description}
-//         </p>
-//         <div className="flex justify-between items-center">
-//           <span className="text-xl font-bold text-gray-600">
-//             रु. {product.price}
-//           </span>
-//           <span
-//             className={`px-2 py-1 rounded text-xs font-bold ${
-//               product.inStock
-//                 ? "bg-green-100 text-green-800"
-//                 : "bg-red-100 text-red-800"
-//             }`}
-//           >
-//             {product.inStock ? "In Stock" : "Out of Stock"}
-//           </span>
-//         </div>
-//         <button
-//           onClick={() => onBuyNow(product)}
-//           disabled={!product.inStock}
-//           className={`mt-4 w-full py-2 px-4 rounded font-bold text-white ${
-//             product.inStock
-//               ? "bg-gray-600 hover:bg-gray-700"
-//               : "bg-gray-400 cursor-not-allowed"
-//           }`}
-//         >
-//           Buy Now
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
 "use client";
 // Product Card Component with Image Zoom
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 // Product Card Component with Image Zoom
 export default function ProductCard({ product, onBuyNow }) {
@@ -56,7 +9,7 @@ export default function ProductCard({ product, onBuyNow }) {
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   
   const imageContainerRef = useRef(null);
-  const zoomFactor = 10; // 10x zoom
+  const zoomFactor = 4; // 10x zoom
 
   const handleMouseMove = (e) => {
     if (!imageContainerRef.current) return;

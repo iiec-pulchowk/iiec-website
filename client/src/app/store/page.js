@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useProducts } from "@/data/Products"; // Updated import to use the hook
 
 import Modal from "@/components/Modal/PurchaseModal";
-import ProductCard from "@/components/ui/ProductCard";
+import ProductCard from "@/components/store/ProductCard";
 import Link from "next/link";
 
 export default function Store() {
