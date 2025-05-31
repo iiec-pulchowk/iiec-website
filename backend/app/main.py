@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .database import engine
 from . import models
-from .routers import users, products, projects
+from .routers import users, products, projects, events
 
 
 app = FastAPI(title="IIEC API", version="1.0.0")
@@ -26,3 +26,4 @@ app.add_middleware(
 app.include_router(users.router)
 app.include_router(products.router)
 app.include_router(projects.router)
+app.include_router(events.router)

@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, Text, Float, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from .database import Base
 
@@ -41,6 +42,8 @@ class Project(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+    sections = relationship("ProjectSection", back_populates="project")
+
 
 class ProjectSection(Base):
     __tablename__ = "projects_sections"
@@ -51,5 +54,22 @@ class ProjectSection(Base):
     description = Column(Text)
     details = Column(Text)
     main_image_url = Column(String)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    project = relationship("Project", back_populates="sections")
+
+
+class Events(Base):
+    __tablename__ = "events"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    title = Column(String, nullable=False)
+    description = Column(Text)
+    date = Column(String, nullable=False)  # Stores date as YYYY-MM-DD
+    time = Column(String, nullable=False)
+    location = Column(String, nullable=False)
+    url = Column(String)
+    imageUrl = Column(String)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

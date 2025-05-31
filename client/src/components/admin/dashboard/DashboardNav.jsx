@@ -4,7 +4,6 @@ import { FolderOpen, Calendar, Bell, ShoppingCart } from "lucide-react";
 const navItems = [
   { id: "projects", label: "Projects", icon: FolderOpen },
   { id: "events", label: "Events", icon: Calendar },
-  { id: "notices", label: "Notices", icon: Bell },
   { id: "products", label: "Products", icon: ShoppingCart },
 ];
 

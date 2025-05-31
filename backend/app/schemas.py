@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 
 class UserBase(BaseModel):
@@ -50,6 +50,34 @@ class Product(ProductBase):
         from_attributes = True
 
 
+class ProjectSectionBase(BaseModel):
+    project_id: int
+    title: str
+    description: Optional[str] = None
+    details: Optional[str] = None
+    main_image_url: Optional[str] = None
+
+
+class ProjectSectionCreate(ProjectSectionBase):
+    pass
+
+
+class ProjectSectionUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    details: Optional[str] = None
+    main_image_url: Optional[str] = None
+
+
+class ProjectSection(ProjectSectionBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
 class ProjectBase(BaseModel):
     name: str
     description: Optional[str] = None
@@ -74,31 +102,37 @@ class Project(ProjectBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
+    sections: List[ProjectSection] = []
 
     class Config:
         from_attributes = True
 
 
-class ProjectSectionBase(BaseModel):
-    project_id: int
+class EventBase(BaseModel):
     title: str
     description: Optional[str] = None
-    details: Optional[str] = None
-    main_image_url: Optional[str] = None
+    date: str  # Expects YYYY-MM-DD
+    time: str
+    location: str
+    url: Optional[str] = None
+    imageUrl: Optional[str] = None
 
 
-class ProjectSectionCreate(ProjectSectionBase):
+class EventCreate(EventBase):
     pass
 
 
-class ProjectSectionUpdate(BaseModel):
+class EventUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    details: Optional[str] = None
-    main_image_url: Optional[str] = None
+    date: Optional[str] = None
+    time: Optional[str] = None
+    location: Optional[str] = None
+    url: Optional[str] = None
+    imageUrl: Optional[str] = None
 
 
-class ProjectSection(ProjectSectionBase):
+class Event(EventBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None

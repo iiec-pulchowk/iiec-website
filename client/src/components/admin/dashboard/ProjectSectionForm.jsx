@@ -187,7 +187,7 @@ const ProjectSectionForm = ({
                     src={imagePreview || "/placeholder.svg"}
                     alt="Preview"
                     className="h-32 w-32 object-cover rounded-lg border"
-                    onError={() => setImagePreview(null)}
+                    onError={() => setImagePreview("/placeholder.svg")} // Fallback to placeholder on error
                   />
                   <button
                     type="button"
