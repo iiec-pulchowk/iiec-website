@@ -3,7 +3,8 @@
 // export const events = [ ... ]; // Remove static data
 import { useState, useEffect } from "react"; // Added missing import
 
-const API_BASE_URL = "http://localhost:8080"; // Adjust if your backend URL is different
+// const API_BASE_URL = "http://localhost:8080"; // Adjust if your backend URL is different
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // API service for events
 export const eventsAPI = {
