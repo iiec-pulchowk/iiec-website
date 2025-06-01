@@ -11,9 +11,9 @@ export const metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_BASEURL || "http://localhost:3000"
   ),
-  title: "IIEC Pulchowk - Innovation & Entrepreneurship", // More specific title
+  title: "IIEC Pulchowk - Incubation, Innovation and Entrepreneurship Center", // More specific title
   description:
-    "Official page of the Incubation Innovation and Entrepreneurship Center (IIEC) at Pulchowk Campus, IOE, Nepal.", // More descriptive
+    "Official page of the Incubation, Innovation and Entrepreneurship Center (IIEC) at Pulchowk Campus, IOE, Nepal.", // More descriptive
   generator: "Next.js",
   applicationName: "IIEC Pulchowk", // Added Pulchowk for specificity
   referrer: "origin-when-cross-origin",
