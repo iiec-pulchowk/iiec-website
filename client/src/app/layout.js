@@ -57,7 +57,7 @@ export const metadata = {
     siteName: "IIEC Pulchowk", // Site name
     images: [
       {
-        url: "/logo.png", // Ensure this is a good preview image, ideally a banner like SEDS
+        url: "/logo_main.jpg", // Ensure this is a good preview image, ideally a banner like SEDS
         width: 1200, // Standard OG image width
         height: 630, // Standard OG image height
         alt: "IIEC Pulchowk Campus Logo",
