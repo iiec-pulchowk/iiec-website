@@ -8,6 +8,7 @@ import Modal from "@/components/Modal/PurchaseModal";
 import ProductCard from "@/components/store/ProductCard";
 import Link from "next/link";
 import emailjs from "@emailjs/browser";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 export default function Store() {
   // Use the custom hook for products data
@@ -27,6 +28,7 @@ export default function Store() {
     image: "",
     price: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const openModal = (product) => {
     setSelectedProduct(product);
@@ -47,8 +49,9 @@ export default function Store() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     //  TODO: handle these data at backend also
 
     // EmailJS template parameters
@@ -72,7 +75,7 @@ export default function Store() {
     };
 
     // Send email via EmailJS
-    emailjs
+    const result = await emailjs
       .send(
         "service_3eiujct",
         "template_dtv6sqp",
@@ -91,9 +94,10 @@ export default function Store() {
           image: "",
           price: "",
         });
-        console.log("New order service added: ", templateParams);
+      setIsSubmitting(false);
       })
       .catch((error) => {
+        setIsSubmitting(false);
         console.error("Email failed to send:", error);
         // Handle error appropriately
       });
@@ -247,6 +251,7 @@ export default function Store() {
           handleInputChange={handleInputChange}
           setProductData={setProductData}
           handleSubmit={handleSubmit}
+          isSubmitting={isSubmitting}
           orderSuccess={orderSuccess}
         />
       )}
