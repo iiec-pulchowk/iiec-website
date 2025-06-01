@@ -193,7 +193,7 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* Common fields can be abstracted further if needed */}
 
-        {fields.map((field) => (
+        {/* {fields.map((field) => (
           <div key={field.name}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {field.label}
@@ -254,7 +254,7 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
               />
             )}
           </div>
-        ))}
+        ))} */}
 
         {type === "projects" && (
           <>
@@ -650,7 +650,7 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Price ($)
+                  Price (रु)
                 </label>
                 <input
                   type="number"
