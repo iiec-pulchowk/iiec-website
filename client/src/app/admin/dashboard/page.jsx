@@ -7,6 +7,7 @@ import DashboardNav from "../../../components/admin/dashboard/DashboardNav";
 import ItemList from "../../../components/admin/dashboard/ItemList";
 import ItemForm from "../../../components/admin/dashboard/ItemForm";
 import ProjectSectionForm from "../../../components/admin/dashboard/ProjectSectionForm";
+import ConfirmationModal from "../../../components/admin/dashboard/ConfirmationModal"; // Import the new modal
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("projects");
@@ -23,6 +24,11 @@ const AdminDashboard = () => {
   const [showSectionForm, setShowSectionForm] = useState(false);
   const [editingSection, setEditingSection] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+
+  // State for confirmation modal
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null); // { id, type, itemDescription }
+
 
   // Update API URL to match your FastAPI backend
   const API_BASE = "http://localhost:8080";
@@ -408,11 +414,27 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDelete = async (id, type) => {
-    if (!confirm("Are you sure you want to delete this item?")) return;
+  const handleDeleteRequest = (id, type) => {
+    // Find the item to get a description for the modal, if needed
+    let itemDescription = `item with ID ${id}`;
+    const currentData = getCurrentData();
+    const item = currentData.find(i => i.id === id);
+    if (item) {
+      itemDescription = item.name || item.title || `ID ${id}`;
+    }
 
-    setLoading(true);
-    setError(null);
+    setItemToDelete({ id, type, itemDescription });
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!itemToDelete) return;
+
+    const { id, type } = itemToDelete;
+    // setLoading(true); // Loading state is handled by the modal now, or can be passed to it
+    // setError(null); // Error state can also be managed or reset here
+
+    // The actual deletion logic, moved from the original handleDelete
     try {
       switch (type) {
         case "projects":
@@ -428,7 +450,8 @@ const AdminDashboard = () => {
             setProjects((prev) => prev.filter((p) => p.id !== id));
           } catch (err) {
             console.error("API call failed, using mock behavior:", err);
-            setProjects((prev) => prev.filter((p) => p.id !== id));
+            setError(`Failed to delete project: ${err.message}.`); // Set error for display
+            // setProjects((prev) => prev.filter((p) => p.id !== id)); // Optional: optimistic update on error
           }
           break;
         case "events":
@@ -446,9 +469,9 @@ const AdminDashboard = () => {
               err
             );
             setError(
-              `Failed to delete event (API error): ${err.message}. Using mock behavior.`
+              `Failed to delete event: ${err.message}.`
             );
-            setEvents((prev) => prev.filter((e) => e.id !== id)); // Mock delete
+            // setEvents((prev) => prev.filter((e) => e.id !== id)); // Mock delete
           }
           break;
         case "products":
@@ -464,7 +487,8 @@ const AdminDashboard = () => {
             setProducts((prev) => prev.filter((p) => p.id !== id));
           } catch (err) {
             console.error("API call failed, using mock behavior:", err);
-            setProducts((prev) => prev.filter((p) => p.id !== id));
+            setError(`Failed to delete product: ${err.message}.`);
+            // setProducts((prev) => prev.filter((p) => p.id !== id));
           }
           break;
         case "orders": // Add case for orders
@@ -484,17 +508,80 @@ const AdminDashboard = () => {
             setOrders((prev) => prev.filter((o) => o.id !== id));
           } catch (err) {
             console.error("Orders API delete call failed:", err);
-            setError(`Failed to delete order (API error): ${err.message}.`);
+            setError(`Failed to delete order: ${err.message}.`);
           }
           break;
       }
-    } catch (error) {
+    } catch (error) { // This catch is for unexpected errors in the switch logic itself
       console.error("Error deleting item:", error);
-      setError(`Failed to delete ${type.slice(0, -1)}. ${error.message}`);
+      setError(`Failed to delete ${type ? type.slice(0, -1) : 'item'}. ${error.message}`);
     } finally {
-      setLoading(false);
+      // setLoading(false); // Modal handles its own loading state for the confirm button
+      setShowConfirmationModal(false);
+      setItemToDelete(null);
     }
   };
+  
+  const handleCancelDelete = () => {
+    setShowConfirmationModal(false);
+    setItemToDelete(null);
+  };
+
+
+  const handleDeleteSectionRequest = (sectionId, projectId) => {
+     // Find the section to get a description for the modal
+    const project = projects.find(p => p.id === projectId);
+    let itemDescription = `section with ID ${sectionId}`;
+    if (project && project.sections) {
+        const section = project.sections.find(s => s.id === sectionId);
+        if (section) {
+            itemDescription = section.title || `ID ${sectionId}`;
+        }
+    }
+    setItemToDelete({ id: sectionId, type: 'projectSection', projectId, itemDescription }); // Use a distinct type
+    setShowConfirmationModal(true);
+  };
+
+  const handleConfirmDeleteSection = async () => {
+    if (!itemToDelete || itemToDelete.type !== 'projectSection') return;
+    const { id: sectionId, projectId } = itemToDelete;
+
+    // setLoading(true); // Modal handles its own loading state
+    // setError(null);
+
+    try {
+      const url = `${API_BASE}/projects/sections/${sectionId}`;
+      const response = await fetch(url, { method: "DELETE" });
+
+      if (!response.ok && response.status !== 204) {
+         const errorBody = await response.text();
+         throw new Error(`HTTP error! status: ${response.status}. ${errorBody}`);
+      }
+      
+      setProjects((prev) =>
+        prev.map((project) => {
+          if (project.id === projectId) {
+            return {
+              ...project,
+              sections: (project.sections || []).filter(
+                (s) => s.id !== sectionId
+              ),
+            };
+          }
+          return project;
+        })
+      );
+
+    } catch (error) {
+      console.error("Error deleting section:", error);
+      setError(`Failed to delete section. ${error.message}`);
+    } finally {
+      // setLoading(false);
+      setShowConfirmationModal(false);
+      setItemToDelete(null);
+    }
+  };
+
 
   const handleEdit = (item, type) => {
     setEditingItem(item);
@@ -726,13 +813,13 @@ const AdminDashboard = () => {
             items={getCurrentData()}
             type={activeTab}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={handleDeleteRequest} // Use new handler
             loading={loading}
             expandedProjects={expandedProjects}
             onToggleProject={toggleProjectExpansion}
             onAddSection={handleAddSection}
             onEditSection={handleEditSection}
-            onDeleteSection={handleDeleteSection}
+            onDeleteSection={handleDeleteSectionRequest} // Use new handler for sections
           />
         ) : showSectionForm ? (
           <ProjectSectionForm
@@ -756,6 +843,14 @@ const AdminDashboard = () => {
           />
         )}
       </div>
+      <ConfirmationModal
+        isOpen={showConfirmationModal}
+        onClose={handleCancelDelete}
+        onConfirm={itemToDelete?.type === 'projectSection' ? handleConfirmDeleteSection : handleConfirmDelete}
+        title={itemToDelete?.type === 'projectSection' ? "Delete Project Section" : "Delete Item"}
+        message={`Are you sure you want to delete "${itemToDelete?.itemDescription || 'this item'}"? This action cannot be undone.`}
+        loading={loading} // Pass the main loading state to the modal for its button
+      />
     </div>
   );
 };
