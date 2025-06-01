@@ -50,14 +50,14 @@ export const metadata = {
   },
 
   openGraph: {
-    title: "IIEC Pulchowk - Innovation & Entrepreneurship", // Consistent and specific title
+    title: "IIEC Pulchowk - Incubation, Innovation and Entrepreneurship Center", // Consistent and specific title
     description:
-      "Official page of the Incubation Innovation and Entrepreneurship Center (IIEC) at Pulchowk Campus, IOE, Nepal.", // Consistent and descriptive
+      "Official page of the Incubation, Innovation and Entrepreneurship Center (IIEC) at Pulchowk Campus, IOE, Nepal.", // Consistent and descriptive
     url: process.env.NEXT_PUBLIC_BASEURL || "http://localhost:3000", // Canonical URL of the website
     siteName: "IIEC Pulchowk", // Site name
     images: [
       {
-        url: "/logo_main.jpg", // Ensure this is a good preview image, ideally a banner like SEDS
+        url: "/logo.png", // Ensure this is a good preview image, ideally a banner like SEDS
         width: 1200, // Standard OG image width
         height: 630, // Standard OG image height
         alt: "IIEC Pulchowk Campus Logo",
