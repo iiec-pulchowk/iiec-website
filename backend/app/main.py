@@ -17,7 +17,6 @@ def on_startup():
     # models.Base.metadata.drop_all(bind=engine) # For primary DB
     models.Base.metadata.create_all(bind=engine)  # For primary DB
     # models.BaseHistory.metadata.drop_all(bind = engine_history)
-    # models.BaseHistory.metadata.drop_all(bind=engine_history) # For history DB
     models.BaseHistory.metadata.create_all(
         bind=engine_history)  # For history DB
 

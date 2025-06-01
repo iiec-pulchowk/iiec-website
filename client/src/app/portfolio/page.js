@@ -15,7 +15,7 @@ import {
   project_success_matrics,
 } from "@/data/Projects";
 
-import Projects from "@/components/portfolio/Projects";
+import Projects from "@/components/portfolio/projects";
 
 export default function ProjectsPage() {
   // Use the API hooks from Projects.js

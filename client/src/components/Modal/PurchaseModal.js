@@ -1,4 +1,8 @@
+"use client";
+
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 // Modal Component
 export default function Modal({
@@ -8,19 +12,11 @@ export default function Modal({
   setQuantity,
   formData,
   handleInputChange,
-  setProductData,
   handleSubmit,
+  isSubmitting,
   orderSuccess,
 }) {
   const totalPrice = (product.price * quantity).toFixed(2);
-
-  useEffect(() => {
-    setProductData({
-      name: product.name,
-      image: product.image,
-      price: product.price,
-    });
-  }, []);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -154,12 +150,20 @@ export default function Modal({
                 >
                   Cancel
                 </button>
-                <button
+                <Button
                   type="submit"
-                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  className="w-full"
+                  disabled={isSubmitting}
                 >
-                  Confirm Order
-                </button>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Requesting...
+                    </>
+                  ) : (
+                    <>Confirm Order</>
+                  )}
+                </Button>
               </div>
             </form>
           ) : (

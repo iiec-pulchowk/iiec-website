@@ -2,15 +2,14 @@
 
 import { useState, useEffect } from "react";
 
-// API configuration
-const API_BASE_URL = "http://localhost:8080";
+const apiUrl  = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 // API service for projects
 export const projectsAPI = {
   // Get all projects
   getProjects: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/projects`);
+      const response = await fetch(`${apiUrl }/projects`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -25,7 +24,7 @@ export const projectsAPI = {
   // Get single project by ID
   getProject: async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${id}`);
+      const response = await fetch(`${apiUrl }/projects/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -41,7 +40,7 @@ export const projectsAPI = {
   getProjectSections: async (projectId) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/projects/${projectId}/sections`
+        `${apiUrl }/projects/${projectId}/sections`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -59,7 +58,7 @@ export const projectsAPI = {
     try {
       // Since there's no direct endpoint for all sections, we'll get all projects first
       // then get sections for each project
-      const projects = await fetch(`${API_BASE_URL}/projects`);
+      const projects = await fetch(`${apiUrl }/projects`);
       if (!projects.ok) {
         throw new Error(`HTTP error! status: ${projects.status}`);
       }
@@ -69,7 +68,7 @@ export const projectsAPI = {
       for (const project of projectsData) {
         try {
           const sectionsResponse = await fetch(
-            `${API_BASE_URL}/projects/${project.id}/sections`
+            `${apiUrl }/projects/${project.id}/sections`
           );
           if (sectionsResponse.ok) {
             const sections = await sectionsResponse.json();
@@ -94,7 +93,7 @@ export const projectsAPI = {
   getProjectSection: async (sectionId) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/projects/sections/${sectionId}`
+        `${apiUrl }/projects/sections/${sectionId}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -110,7 +109,7 @@ export const projectsAPI = {
   // Create new project
   createProject: async (projectData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/`, {
+      const response = await fetch(`${apiUrl }/projects/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +129,7 @@ export const projectsAPI = {
   // Update project
   updateProject: async (id, projectData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
+      const response = await fetch(`${apiUrl }/projects/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -150,7 +149,7 @@ export const projectsAPI = {
   // Delete project
   deleteProject: async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/projects/${id}`, {
+      const response = await fetch(`${apiUrl }/projects/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -167,7 +166,7 @@ export const projectsAPI = {
   createProjectSection: async (projectId, sectionData) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/projects/${projectId}/sections`,
+        `${apiUrl }/projects/${projectId}/sections`,
         {
           method: "POST",
           headers: {
@@ -190,7 +189,7 @@ export const projectsAPI = {
   updateProjectSection: async (sectionId, sectionData) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/projects/sections/${sectionId}`,
+        `${apiUrl }/projects/sections/${sectionId}`,
         {
           method: "PUT",
           headers: {
@@ -213,7 +212,7 @@ export const projectsAPI = {
   deleteProjectSection: async (sectionId) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/projects/sections/${sectionId}`,
+        `${apiUrl }/projects/sections/${sectionId}`,
         {
           method: "DELETE",
         }

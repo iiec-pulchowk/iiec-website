@@ -152,11 +152,11 @@ class Event(EventBase):
         from_attributes = True
 
 
-# Schemas for OrderHistory
 class OrderHistoryBase(BaseModel):
     full_name: str
     email: str
     contact: str
+    product_title: str  # ADDED
     quantity: int  # Total quantity of items
     total_amount: float  # Represents 'total'
 
@@ -169,6 +169,7 @@ class OrderHistoryUpdate(BaseModel):
     full_name: Optional[str] = None
     email: Optional[str] = None
     contact: Optional[str] = None
+    product_title: Optional[str] = None  # ADDED
     quantity: Optional[int] = None
     total_amount: Optional[float] = None
 
@@ -180,13 +181,6 @@ class OrderHistory(OrderHistoryBase):
     class Config:
         from_attributes = True
 
-class UserResponse(UserBase):
-    id: int
-    created_at: datetime
-    updated_at: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
 
 class Token(BaseModel):
     access_token: str

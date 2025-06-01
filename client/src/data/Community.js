@@ -57,34 +57,34 @@ export const communityOrganizations = [
     name: "Flying Club",
     description:
       "Flying Club Pulchowk is a vibrant community of aerospace enthusiasts dedicated to exploring UAV technology and aeromodelling through hands-on projects, competitions, and outreach initiatives.",
-    details: [
-      "RC Plane: Initiated our journey into flight control, aerodynamics, and propulsion.",
-      "Autonomous Medical UAV: Fixed-wing drone for secure medical delivery using parachute system.",
-      "Aerial Mapping UAS: Designed to monitor PM2.5 and PM10 levels via drone-based mapping.",
-      "Blended Wing VTOL: Experimental BWB UAS integrating VTOL capabilities.",
-      "Thermal Drone: Equipped for night ops and heat signature detection.",
-      "Autonomous Drone: Pixhawk 6X-based UAV with GPS waypoint navigation.",
-      "Rubber Powered Glider: Educational glider to demonstrate flight principles.",
-      "Tricopter VTOL: Combines vertical lift with efficient cruise flight.",
-    ],
     projects: [
       {
-        name: "DBF Competition",
+        name: "RC Plane",
         description:
-          "Secured 38th position at the AIAA DBF 2025 competition among 130+ international teams with a custom-built RC aircraft.",
+          "It was first initiative involved designing, building, and successfully flying a radio-controlled aircraft. This foundational project introduced to the core principles of aerodynamics, propulsion, and flight control.",
       },
       {
-        name: "National Aeromodelling Competition",
+        name: "Autonomous Medical UAV",
         description:
-          "Achieved 16th position at IIT Bombay zonals with precision payload RC aircraft.",
+          "This project endeavors to develop a cost-effective and efficient Unmanned Aerial System (UAS) designed for transporting medical supplies to remote and challenging locations. The UAS, a fixed-wing aircraft, incorporates a parachute system to ensure the secure and safe delivery of medical cargo.",
       },
       {
-        name: "Workshops and Outreach",
+        name: "Aerial Mapping UAS",
         description:
-          "Conducted hands-on workshops on XFLR5, RC planes, drone piloting, and UAVs; inspired students via school outreach and APF drone show.",
+          "Developed an air pollution measurement system using an unmanned aerial vehicle, integrating calibrated particulate matter and environmental sensors, with successful flight testing demonstrating the feasibility of drone-based air quality monitoring to monitor PM2.5 and PM10 levels via drone-based mapping.",
+      },
+      {
+        name: "Tricopter Tilt Rotor VTOL",
+        description:
+          "Designed and built a VTOL tricopter featuring tiltable rotors that enable seamless transition between vertical hovering and efficient forward flight. The aircraft combines rotary-wing maneuverability with fixed-wing efficiency, making it suitable for surveying, mapping, inspection tasks in challenging terrain, and experimental aerodynamics testing.",
+      },
+      {
+        name: "Rubber Powered Glider",
+        description:
+          "Built simple rubber band-powered gliders for educational demonstrations and basic aerodynamic experiments. These lightweight aircraft store energy in twisted rubber bands and are excellent for understanding flight mechanics, lift, drag, weight balance, and promoting hands-on problem-solving through iterative design.",
       },
     ],
-    image: "/community/flying_club.png",
+    image: "/community/flying_club.jpg",
     imageAlt: "Flying Club Pulchowk Campus with their drone prototype",
     url: "#",
   },

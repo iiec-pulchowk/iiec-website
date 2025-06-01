@@ -9,6 +9,8 @@ import ProductCard from "@/components/store/ProductCard";
 import Link from "next/link";
 import emailjs from "@emailjs/browser";
 
+const apiUrl  = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
 export default function Store() {
   // Use the custom hook for products data
   const { products, loading, error, refreshProducts } = useProducts();
@@ -17,15 +19,12 @@ export default function Store() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false); // To handle submission state
+  const [submitError, setSubmitError] = useState(null); // To handle submission errors
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-  });
-  const [productData, setProductData] = useState({
-    name: "",
-    image: "",
-    price: "",
   });
 
   const openModal = (product) => {
@@ -47,56 +46,84 @@ export default function Store() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    // Make handleSubmit async
     e.preventDefault();
-    //  TODO: handle these data at backend also
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setOrderSuccess(false);
 
-    // EmailJS template parameters
-    const templateParams = {
-      customer_name: formData.name,
-      customer_email: formData.email,
-      customer_phone: formData.phone,
-      product_name: productData.name,
-      product_image: productData.image,
+    // Prepare order data for the backend
+    const orderPayload = {
+      full_name: formData.name,
+      email: formData.email,
+      contact: formData.phone,
+      product_title: selectedProduct.name,
       quantity: quantity,
-      unit_price: productData.price,
-      total_price: (productData.price * quantity).toFixed(2),
-      order_date: new Date().toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      current_timestamp: new Date().toLocaleString(),
+      total_amount: parseFloat((selectedProduct.price * quantity).toFixed(2)),
     };
 
-    // Send email via EmailJS
-    emailjs
-      .send(
+    try {
+      // 1. Send order to backend
+      const response = await fetch(`${apiUrl }/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderPayload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.detail || `HTTP error! status: ${response.status}`
+        );
+      }
+
+      // Backend call successful, now proceed with EmailJS
+      // EmailJS template parameters
+      const templateParams = {
+        customer_name: formData.name,
+        customer_email: formData.email,
+        customer_phone: formData.phone,
+        product_name: selectedProduct.name, // Use selectedProduct
+        product_image: selectedProduct.imageUrl || selectedProduct.image, // Use selectedProduct and handle potential naming difference
+        quantity: quantity,
+        unit_price: selectedProduct.price, // Use selectedProduct
+        total_price: (selectedProduct.price * quantity).toFixed(2), // Use selectedProduct
+        order_date: new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        current_timestamp: new Date().toLocaleString(),
+      };
+
+      // 2. Send email via EmailJS
+      await emailjs.send(
         "service_3eiujct",
         "template_dtv6sqp",
         templateParams,
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
-      )
-      .then(() => {
-        setOrderSuccess(true);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-        });
-        setProductData({
-          name: "",
-          image: "",
-          price: "",
-        });
-        console.log("New order service added: ", templateParams);
-      })
-      .catch((error) => {
-        console.error("Email failed to send:", error);
-        // Handle error appropriately
-      });
+      );
+      // Both backend and EmailJS successful
+      setOrderSuccess(true);
+      console.log(
+        "New order submitted to backend and email sent: ",
+        orderPayload
+      );
+      setFormData({ name: "", email: "", phone: "" });
+    } catch (error) {
+      console.error("Order submission failed:", error);
+      setSubmitError(
+        error.message || "Failed to submit order. Please try again."
+      );
+      // Handle error appropriately - maybe show a message to the user
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Loading state
@@ -245,9 +272,10 @@ export default function Store() {
           setQuantity={setQuantity}
           formData={formData}
           handleInputChange={handleInputChange}
-          setProductData={setProductData}
           handleSubmit={handleSubmit}
+          isSubmitting={isSubmitting}
           orderSuccess={orderSuccess}
+          submitError={submitError} // Pass submission error to modal
         />
       )}
 

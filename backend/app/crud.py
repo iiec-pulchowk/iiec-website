@@ -226,6 +226,7 @@ def create_order_history(db: Session, order: schemas.OrderHistoryCreate) -> mode
         full_name=order.full_name,
         email=order.email,
         contact=order.contact,
+        product_title=order.product_title,  # ADDED
         quantity=order.quantity,
         total_amount=order.total_amount
     )

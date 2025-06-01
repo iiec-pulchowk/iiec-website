@@ -1,9 +1,9 @@
 import React from "react";
 import { Inter } from "next/font/google";
-import './globals.css';
+import "./globals.css";
 import Navbar from "@/components/navbar";
-import Footer from "@/components/footer"
-import { ThemeProvider } from "@/components/theme-provider"
+import Footer from "@/components/footer";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,25 +11,34 @@ export const metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_BASEURL || "http://localhost:3000"
   ),
-  title: "IIEC",
-  description: "Incubation Innovation and Entrepreneurship Center",
+  title: "IIEC Pulchowk - Incubation, Innovation and Entrepreneurship Center", // More specific title
+  description:
+    "Official page of the Incubation, Innovation and Entrepreneurship Center (IIEC) at Pulchowk Campus, IOE, Nepal.", // More descriptive
   generator: "Next.js",
-  applicationName: "IIEC",
+  applicationName: "IIEC Pulchowk", // Added Pulchowk for specificity
   referrer: "origin-when-cross-origin",
   keywords: [
     "IIEC",
-    "Kamal",
-    "Darlami",
-    "Pulchowk",
-    "IOE"
+    "Incubation",
+    "Innovation",
+    "Entrepreneurship",
+    "Pulchowk Campus",
+    "IOE",
+    "Nepal",
+    "Startups",
   ],
 
   authors: [
-    { name: "Sandip Katel", url: "https://www.skatel.com.np/" },
-    { name: "Kamal Darlami", url: "https://sites.google.com/pcampus.edu.np/kamaldarlami/" },
+    { name: "Sandip Katel", url: "https://github.com/sandipkatel" },
+    { name: "Saphal Rimal", url: "https://github.com/saphalr" },
+    { name: "Sijan Joshi", url: "https://github.com/SijanJ" },
+    {
+      name: "Kamal Darlami",
+      url: "https://sites.google.com/pcampus.edu.np/kamaldarlami/",
+    },
   ],
   creator: "Kamal Darlami",
-  publisher: "IIEC Pulchowk",
+  publisher: "Pulchowk Campus", 
 
   icons: {
     icon: "/logo.png",
@@ -42,21 +51,17 @@ export const metadata = {
   },
 
   openGraph: {
-    title: "IIEC",
-    description: "IIEC",
-    url: "/logo.png",
-    siteName: "IIEC",
+    title: "IIEC Pulchowk - Incubation, Innovation and Entrepreneurship Center", // Consistent and specific title
+    description:
+      "Official page of the Incubation, Innovation and Entrepreneurship Center (IIEC) at Pulchowk Campus, IOE, Nepal.", // Consistent and descriptive
+    url: process.env.NEXT_PUBLIC_BASEURL || "http://localhost:3000", // Canonical URL of the website
+    siteName: "IIEC Pulchowk", // Site name
     images: [
       {
-        url: "/logo.png", // Must be an absolute URL
-        width: 800,
-        height: 600,
-      },
-      {
-        url: "/logo.png", // Must be an absolute URL
-        width: 1800,
-        height: 1600,
-        alt: "IIEC",
+        url: "/logo.png", // Ensure this is a good preview image, ideally a banner like SEDS
+        width: 1200, // Standard OG image width
+        height: 630, // Standard OG image height
+        alt: "IIEC Pulchowk Campus Logo",
       },
     ],
     locale: "en_US",
@@ -64,13 +69,16 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
           <div className="flex min-h-screen flex-col">
             <Navbar />
             <main className="flex-1">{children}</main>
@@ -79,5 +87,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

@@ -56,6 +56,15 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
           inStock: true,
           imageUrl: "",
         };
+      case "orders": // Default fields for orders
+        return {
+          full_name: "",
+          email: "",
+          contact: "",
+          product_title: "", // ADDED
+          quantity: 1,
+          total_amount: 0,
+        };
       default:
         return {};
     }
@@ -103,6 +112,76 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
     }
   };
 
+  const commonFields = [
+    // ...
+  ];
+
+  const typeSpecificFields = {
+    projects: [
+      { name: "name", label: "Project Name", type: "text", required: true },
+      { name: "description", label: "Description", type: "textarea" },
+      { name: "overview", label: "Overview", type: "textarea" },
+      { name: "mainImageUrl", label: "Main Project Image", type: "text" },
+      {
+        name: "status",
+        label: "Status",
+        type: "select",
+        options: ["active", "inactive", "draft"],
+      },
+    ],
+    events: [
+      { name: "title", label: "Event Title", type: "text", required: true },
+      { name: "description", label: "Description", type: "textarea" },
+      { name: "date", label: "Date", type: "date", required: true },
+      { name: "time", label: "Time", type: "time", required: true },
+      { name: "location", label: "Location", type: "text", required: true },
+      { name: "imageUrl", label: "Event Image", type: "text" },
+      { name: "url", label: "Registration/Event URL", type: "text" },
+    ],
+    products: [
+      { name: "name", label: "Product Name", type: "text", required: true },
+      { name: "description", label: "Description", type: "textarea" },
+      {
+        name: "price",
+        label: "Price",
+        type: "number",
+        step: "0.01",
+        required: true,
+      },
+      { name: "imageUrl", label: "Image URL", type: "text" },
+      { name: "inStock", label: "In Stock", type: "checkbox" },
+    ],
+    // orders: [
+    //   { name: "full_name", label: "Full Name", type: "text", required: true },
+    //   { name: "email", label: "Email", type: "email", required: true },
+    //   { name: "contact", label: "Contact Number", type: "tel", required: true },
+    //   {
+    //     name: "product_title",
+    //     label: "Product Title",
+    //     type: "text",
+    //     required: true,
+    //   }, 
+    //   {
+    //     name: "quantity",
+    //     label: "Quantity",
+    //     type: "number",
+    //     required: true,
+    //     min: 1,
+    //   },
+    //   {
+    //     name: "total_amount",
+    //     label: "Total Amount",
+    //     type: "number",
+    //     step: "0.01",
+    //     required: true,
+    //     min: 0,
+    //   },
+
+    // ],
+  };
+
+  const fields = typeSpecificFields[type] || [];
+
   return (
     <div className="bg-white shadow rounded-lg">
       <div className="px-6 py-4 border-b border-gray-200">
@@ -114,47 +193,71 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
         {/* Common fields can be abstracted further if needed */}
 
-        {type === "projects" && (
-          <>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Project Name
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => handleChange("name", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div className="max-w-md">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
+        {fields.map((field) => (
+          <div key={field.name}>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {field.label}
+            </label>
+            {field.type === "textarea" ? (
               <textarea
-                value={formData.description}
-                onChange={(e) => handleChange("description", e.target.value)}
+                name={field.name}
+                value={formData[field.name]}
+                onChange={(e) => handleChange(field.name, e.target.value)}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
+                required={field.required}
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Overview
-              </label>
-              <textarea
-                value={formData.overview}
-                onChange={(e) => handleChange("overview", e.target.value)}
-                rows={4}
+            ) : field.type === "select" ? (
+              <select
+                name={field.name}
+                value={formData[field.name]}
+                onChange={(e) => handleChange(field.name, e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Detailed project overview..."
+                required={field.required}
+              >
+                {field.options.map((option) => (
+                  <option key={option} value={option}>
+                    {option.charAt(0).toUpperCase() + option.slice(1)}
+                  </option>
+                ))}
+              </select>
+            ) : field.type === "checkbox" ? (
+              <input
+                type="checkbox"
+                name={field.name}
+                id={field.name}
+                checked={formData[field.name] || false}
+                onChange={handleChange}
+                className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-            </div>
+            ) : field.type === "number" ? (
+              <input
+                type={field.type}
+                name={field.name}
+                id={field.name}
+                value={formData[field.name] || ""}
+                onChange={handleChange}
+                required={field.required}
+                min={field.min}
+                step={field.step}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            ) : (
+              <input
+                type={field.type}
+                name={field.name}
+                id={field.name}
+                value={formData[field.name] || ""}
+                onChange={handleChange}
+                required={field.required}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            )}
+          </div>
+        ))}
 
+        {type === "projects" && (
+          <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Main Project Image
@@ -239,21 +342,6 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
                   </div>
                 )}
               </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Status
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) => handleChange("status", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-                <option value="draft">Draft</option>
-              </select>
             </div>
           </>
         )}
@@ -445,8 +533,6 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
           </>
         )}
 
-        
-
         {type === "products" && (
           <>
             <div>
@@ -599,6 +685,79 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
             </div>
           </>
         )}
+
+        {/* {type === "orders" && ( // Order fields
+          <>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={formData.full_name}
+                onChange={(e) => handleChange("full_name", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Contact Number
+              </label>
+              <input
+                type="tel"
+                value={formData.contact}
+                onChange={(e) => handleChange("contact", e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Quantity
+                </label>
+                <input
+                  type="number"
+                  value={formData.quantity}
+                  onChange={(e) => handleChange("quantity", e.target.value)}
+                  min="1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Total Amount ($)
+                </label>
+                <input
+                  type="number"
+                  value={formData.total_amount}
+                  onChange={(e) => handleChange("total_amount", e.target.value)}
+                  step="0.01"
+                  min="0"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+            </div>
+          </>
+        )} */}
 
         <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
           <button
