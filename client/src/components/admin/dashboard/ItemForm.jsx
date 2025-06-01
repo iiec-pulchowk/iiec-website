@@ -9,10 +9,26 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
   useEffect(() => {
     if (item) {
       let currentFormData = { ...item };
-
+      // Ensure date is in YYYY-MM-DD for date inputs if it's not already a string
+      if (
+        type === "events" &&
+        currentFormData.date &&
+        !(
+          typeof currentFormData.date === "string" &&
+          currentFormData.date.match(/^\d{4}-\d{2}-\d{2}$/)
+        )
+      ) {
+        try {
+          currentFormData.date = new Date(currentFormData.date)
+            .toISOString()
+            .split("T")[0];
+        } catch (e) {
+          console.error("Error formatting date:", e);
+          currentFormData.date = ""; // Fallback to empty if date is invalid
+        }
+      }
       setFormData(currentFormData);
 
-      // Set image preview based on the item type and its image field
       if (type === "projects" && item.mainImageUrl) {
         setImagePreview(item.mainImageUrl);
       } else if ((type === "events" || type === "products") && item.imageUrl) {
@@ -21,9 +37,8 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
         setImagePreview(null);
       }
     } else {
-      // Reset form for new item
       setFormData(getDefaultFormData(type));
-      setImagePreview(null); // Clear preview for new item
+      setImagePreview(null);
     }
   }, [item, type]);
 
@@ -79,6 +94,11 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleGenericInputChange = (e) => {
+    const { name, value, type: inputType, checked } = e.target;
+    handleChange(name, inputType === "checkbox" ? checked : value);
+  };
+
   const handleImageUrlChange = (url) => {
     const imageField = type === "projects" ? "mainImageUrl" : "imageUrl";
     handleChange(imageField, url);
@@ -112,76 +132,6 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
     }
   };
 
-  const commonFields = [
-    // ...
-  ];
-
-  const typeSpecificFields = {
-    projects: [
-      { name: "name", label: "Project Name", type: "text", required: true },
-      { name: "description", label: "Description", type: "textarea" },
-      { name: "overview", label: "Overview", type: "textarea" },
-      { name: "mainImageUrl", label: "Main Project Image", type: "text" },
-      {
-        name: "status",
-        label: "Status",
-        type: "select",
-        options: ["active", "inactive", "draft"],
-      },
-    ],
-    events: [
-      { name: "title", label: "Event Title", type: "text", required: true },
-      { name: "description", label: "Description", type: "textarea" },
-      { name: "date", label: "Date", type: "date", required: true },
-      { name: "time", label: "Time", type: "time", required: true },
-      { name: "location", label: "Location", type: "text", required: true },
-      { name: "imageUrl", label: "Event Image", type: "text" },
-      { name: "url", label: "Registration/Event URL", type: "text" },
-    ],
-    products: [
-      { name: "name", label: "Product Name", type: "text", required: true },
-      { name: "description", label: "Description", type: "textarea" },
-      {
-        name: "price",
-        label: "Price",
-        type: "number",
-        step: "0.01",
-        required: true,
-      },
-      { name: "imageUrl", label: "Image URL", type: "text" },
-      { name: "inStock", label: "In Stock", type: "checkbox" },
-    ],
-    // orders: [
-    //   { name: "full_name", label: "Full Name", type: "text", required: true },
-    //   { name: "email", label: "Email", type: "email", required: true },
-    //   { name: "contact", label: "Contact Number", type: "tel", required: true },
-    //   {
-    //     name: "product_title",
-    //     label: "Product Title",
-    //     type: "text",
-    //     required: true,
-    //   }, 
-    //   {
-    //     name: "quantity",
-    //     label: "Quantity",
-    //     type: "number",
-    //     required: true,
-    //     min: 1,
-    //   },
-    //   {
-    //     name: "total_amount",
-    //     label: "Total Amount",
-    //     type: "number",
-    //     step: "0.01",
-    //     required: true,
-    //     min: 0,
-    //   },
-
-    // ],
-  };
-
-  const fields = typeSpecificFields[type] || [];
-
   return (
     <div className="bg-white shadow rounded-lg">
       <div className="px-6 py-4 border-b border-gray-200">
@@ -191,73 +141,77 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
       </div>
 
       <form onSubmit={handleSubmit} className="p-6 space-y-6">
-        {/* Common fields can be abstracted further if needed */}
-
-        {/* {fields.map((field) => (
-          <div key={field.name}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {field.label}
-            </label>
-            {field.type === "textarea" ? (
-              <textarea
-                name={field.name}
-                value={formData[field.name]}
-                onChange={(e) => handleChange(field.name, e.target.value)}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required={field.required}
-              />
-            ) : field.type === "select" ? (
-              <select
-                name={field.name}
-                value={formData[field.name]}
-                onChange={(e) => handleChange(field.name, e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required={field.required}
-              >
-                {field.options.map((option) => (
-                  <option key={option} value={option}>
-                    {option.charAt(0).toUpperCase() + option.slice(1)}
-                  </option>
-                ))}
-              </select>
-            ) : field.type === "checkbox" ? (
-              <input
-                type="checkbox"
-                name={field.name}
-                id={field.name}
-                checked={formData[field.name] || false}
-                onChange={handleChange}
-                className="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-            ) : field.type === "number" ? (
-              <input
-                type={field.type}
-                name={field.name}
-                id={field.name}
-                value={formData[field.name] || ""}
-                onChange={handleChange}
-                required={field.required}
-                min={field.min}
-                step={field.step}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-            ) : (
-              <input
-                type={field.type}
-                name={field.name}
-                id={field.name}
-                value={formData[field.name] || ""}
-                onChange={handleChange}
-                required={field.required}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              />
-            )}
-          </div>
-        ))} */}
-
         {type === "projects" && (
           <>
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Project Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                value={formData.name || ""}
+                onChange={handleGenericInputChange}
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Description
+              </label>
+              <textarea
+                name="description"
+                id="description"
+                value={formData.description || ""}
+                onChange={handleGenericInputChange}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="overview"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Overview
+              </label>
+              <textarea
+                name="overview"
+                id="overview"
+                value={formData.overview || ""}
+                onChange={handleGenericInputChange}
+                rows={5}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="status"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Status
+              </label>
+              <select
+                name="status"
+                id="status"
+                value={formData.status || "active"}
+                onChange={handleGenericInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            {/* Project Image Upload Section */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Main Project Image
@@ -350,25 +304,35 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="title"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Event Title
                 </label>
                 <input
                   type="text"
-                  value={formData.title}
-                  onChange={(e) => handleChange("title", e.target.value)}
+                  name="title"
+                  id="title"
+                  value={formData.title || ""}
+                  onChange={handleGenericInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="location"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Location
                 </label>
                 <input
                   type="text"
-                  value={formData.location}
-                  onChange={(e) => handleChange("location", e.target.value)}
+                  name="location"
+                  id="location"
+                  value={formData.location || ""}
+                  onChange={handleGenericInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
@@ -376,12 +340,17 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Description
               </label>
               <textarea
-                value={formData.description}
-                onChange={(e) => handleChange("description", e.target.value)}
+                name="description"
+                id="description"
+                value={formData.description || ""}
+                onChange={handleGenericInputChange}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
@@ -389,62 +358,61 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {" "}
-              {/* Changed from md:grid-cols-3 */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="date"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Date
                 </label>
                 <input
-                  type="date" // HTML5 date input expects YYYY-MM-DD
-                  value={formData.date}
-                  onChange={(e) => handleChange("date", e.target.value)}
+                  type="date"
+                  name="date"
+                  id="date"
+                  value={formData.date || ""} // Ensure value is string YYYY-MM-DD
+                  onChange={handleGenericInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="time"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Time
                 </label>
                 <input
                   type="time"
-                  value={formData.time}
-                  onChange={(e) => handleChange("time", e.target.value)}
+                  name="time"
+                  id="time"
+                  value={formData.time || ""}
+                  onChange={handleGenericInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
               </div>
-              {/* Status Dropdown Removed */}
-              {/* <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Status
-                </label>
-                <select
-                  value={formData.status || "upcoming"} 
-                  onChange={(e) => handleChange("status", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="upcoming">Upcoming</option>
-                  <option value="past">Past</option>
-                </select>
-              </div> */}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="url"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Registration/Event URL
               </label>
               <input
                 type="url"
+                name="url"
+                id="url"
                 value={formData.url || ""}
-                onChange={(e) => handleChange("url", e.target.value)}
+                onChange={handleGenericInputChange}
                 placeholder="https://example.com/register"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
-            {/* Event Image Upload - Similar to Project Image */}
+            {/* Event Image Upload Section */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Event Image
@@ -536,31 +504,42 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
         {type === "products" && (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Product Name
               </label>
               <input
                 type="text"
-                value={formData.name}
-                onChange={(e) => handleChange("name", e.target.value)}
+                name="name"
+                id="name"
+                value={formData.name || ""}
+                onChange={handleGenericInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Description
               </label>
               <textarea
-                value={formData.description}
-                onChange={(e) => handleChange("description", e.target.value)}
+                name="description"
+                id="description"
+                value={formData.description || ""}
+                onChange={handleGenericInputChange}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
             </div>
 
+            {/* Product Image Upload Section */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Product Image
@@ -649,17 +628,24 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="price"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Price (रु)
                 </label>
                 <input
                   type="number"
+                  name="price"
+                  id="price"
                   step="0.01"
-                  value={formData.price}
+                  value={formData.price === undefined ? "" : formData.price} // Handle undefined for initial render
                   onChange={(e) =>
                     handleChange(
                       "price",
-                      Number.parseFloat(e.target.value) || 0
+                      e.target.value === ""
+                        ? ""
+                        : Number.parseFloat(e.target.value)
                     )
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -673,11 +659,16 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
                 <div className="flex items-center mt-2">
                   <input
                     type="checkbox"
-                    checked={formData.inStock}
-                    onChange={(e) => handleChange("inStock", e.target.checked)}
+                    name="inStock"
+                    id="inStock"
+                    checked={formData.inStock || false}
+                    onChange={handleGenericInputChange}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label className="ml-2 block text-sm text-gray-900">
+                  <label
+                    htmlFor="inStock"
+                    className="ml-2 block text-sm text-gray-900"
+                  >
                     Product is in stock
                   </label>
                 </div>
@@ -685,79 +676,6 @@ const ItemForm = ({ type, item, onSave, onCancel, loading }) => {
             </div>
           </>
         )}
-
-        {/* {type === "orders" && ( // Order fields
-          <>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                value={formData.full_name}
-                onChange={(e) => handleChange("full_name", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleChange("email", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Contact Number
-              </label>
-              <input
-                type="tel"
-                value={formData.contact}
-                onChange={(e) => handleChange("contact", e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Quantity
-                </label>
-                <input
-                  type="number"
-                  value={formData.quantity}
-                  onChange={(e) => handleChange("quantity", e.target.value)}
-                  min="1"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Total Amount ($)
-                </label>
-                <input
-                  type="number"
-                  value={formData.total_amount}
-                  onChange={(e) => handleChange("total_amount", e.target.value)}
-                  step="0.01"
-                  min="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                />
-              </div>
-            </div>
-          </>
-        )} */}
 
         <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
           <button

@@ -1,11 +1,5 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
-from typing import List
-import jwt
-from datetime import datetime, timedelta
-import os
 from .database import engine, engine_history  # Import engine_history
 from . import models
 from .routers import users, products, projects, events, orders  # Import orders router

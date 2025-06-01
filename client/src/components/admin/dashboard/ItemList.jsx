@@ -25,15 +25,17 @@ const ItemList = ({
   const getStatusColor = (status) => {
     switch (status) {
       case "active":
+        return "bg-green-500 text-white";
       case "upcoming":
-        return "bg-green-100 text-green-800";
+        return "bg-blue-500 text-white"; 
       case "inactive":
+        return "bg-red-500 text-white";
       case "past":
-        return "bg-gray-100 text-gray-800";
-      case "draft":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-gray-400 text-gray-800"; 
+      case "completed":
+        return "bg-teal-500 text-white"; 
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-yellow-400 text-gray-800"; 
     }
   };
 
@@ -134,8 +136,7 @@ const ItemList = ({
                 <div className="col-span-1 text-center">Total</div>
                 <div className="col-span-1 text-center">Date</div>
                 <div className="col-span-1 text-center">Time</div>
-                <div className="col-span-1 text-center">Actions</div>{" "}
-                {/* Changed "Action" to "Actions" */}
+                <div className="col-span-1 text-center">Action</div>{" "}
               </div>
             )}
           </li>
@@ -393,7 +394,7 @@ const ItemList = ({
                     {item.total_amount ? item.total_amount.toFixed(2) : "0.00"}
                   </div>
                   <div className="col-span-1 text-sm text-gray-500 text-center">
-                    {new Date(item.order_date).toLocaleDateString('en-GB')}
+                    {new Date(item.order_date).toLocaleDateString("en-GB")}
                   </div>
                   <div className="col-span-1 text-sm text-gray-500 text-center">
                     {new Date(item.order_date).toLocaleTimeString([], {
