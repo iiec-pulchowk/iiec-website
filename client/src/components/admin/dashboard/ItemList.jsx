@@ -37,18 +37,18 @@ const ItemList = ({
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "high":
-        return "bg-red-100 text-red-800";
-      case "medium":
-        return "bg-yellow-100 text-yellow-800";
-      case "low":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  // const getPriorityColor = (priority) => {
+  //   switch (priority) {
+  //     case "high":
+  //       return "bg-red-100 text-red-800";
+  //     case "medium":
+  //       return "bg-yellow-100 text-yellow-800";
+  //     case "low":
+  //       return "bg-green-100 text-green-800";
+  //     default:
+  //       return "bg-gray-100 text-gray-800";
+  //   }
+  // };
 
   if (loading) {
     return (
@@ -117,6 +117,25 @@ const ItemList = ({
                 <div className="col-span-2">Price</div>
                 <div className="col-span-2">In Stock</div>
                 <div className="col-span-3 text-right">Actions</div>
+              </div>
+            )}
+            {type === "orders" && (
+              <div className="grid grid-cols-12 gap-2 items-center">
+                {" "}
+                {/* Adjusted gap */}
+                <div className="col-span-1 text-center">Order ID</div>
+                <div className="col-span-2 text-center">Full Name</div>
+                <div className="col-span-1 text-center">Product Title</div>{" "}
+                {/* Adjusted span */}
+                <div className="col-span-2 text-center">Email</div>
+                <div className="col-span-1 text-center">Contact</div>
+                <div className="col-span-1 text-center">Qty</div>{" "}
+                {/* Added text-center */}
+                <div className="col-span-1 text-center">Total</div>
+                <div className="col-span-1 text-center">Date</div>
+                <div className="col-span-1 text-center">Time</div>
+                <div className="col-span-1 text-center">Actions</div>{" "}
+                {/* Changed "Action" to "Actions" */}
               </div>
             )}
           </li>
@@ -344,6 +363,64 @@ const ItemList = ({
                 </div>
               )}
 
+              {/* Orders */}
+              {type === "orders" && (
+                <div className="grid grid-cols-12 gap-2 items-center text-center">
+                  {" "}
+                  {/* Adjusted gap */}
+                  <div className="col-span-1 text-sm text-gray-900 text-center">
+                    #{item.id}
+                  </div>
+                  <div className="col-span-2 text-sm text-gray-900 text-center">
+                    {item.full_name}
+                  </div>
+                  <div className="col-span-1 text-sm text-gray-900 text-center">
+                    {" "}
+                    {/* Corrected and adjusted span */}
+                    {item.product_title}
+                  </div>
+                  <div className="col-span-2 text-sm text-gray-500 text-center">
+                    {item.email}
+                  </div>
+                  <div className="col-span-1 text-sm text-gray-500 text-center">
+                    {item.contact}
+                  </div>
+                  <div className="col-span-1 text-sm text-gray-900 text-center">
+                    {item.quantity}
+                  </div>
+                  <div className="col-span-1 text-sm text-gray-900 text-center">
+                    Rs.{" "}
+                    {item.total_amount ? item.total_amount.toFixed(2) : "0.00"}
+                  </div>
+                  <div className="col-span-1 text-sm text-gray-500 text-center">
+                    {new Date(item.order_date).toLocaleDateString('en-GB')}
+                  </div>
+                  <div className="col-span-1 text-sm text-gray-500 text-center">
+                    {new Date(item.order_date).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true, // Ensures AM/PM format
+                    })}
+                  </div>
+                  <div className="col-span-1 text-center space-x-2 ">
+                    {/* <button
+                      onClick={() => onEdit(item, type)}
+                      className="text-blue-600 hover:text-blue-900"
+                      aria-label={`Edit Order ${item.id}`}
+                    >
+                      <Edit size={18} />
+                    </button> */}
+                    <button
+                      onClick={() => onDelete(item.id, type)}
+                      className="text-red-600 hover:text-red-900"
+                      aria-label={`Delete Order ${item.id}`}
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Project Sections Row */}
               {type === "projects" && expandedProjects.has(item.id) && (
                 <div className="grid grid-cols-12 gap-4 items-center bg-gray-50 px-6 py-4">
@@ -386,8 +463,7 @@ const ItemList = ({
                                   {section.imageUrl && (
                                     <img
                                       src={
-                                        section.imageUrl ||
-                                        "/placeholder.svg"
+                                        section.imageUrl || "/placeholder.svg"
                                       }
                                       alt={section.title}
                                       className="h-8 w-8 rounded object-cover"

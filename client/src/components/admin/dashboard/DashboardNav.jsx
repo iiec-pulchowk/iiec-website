@@ -5,6 +5,7 @@ const navItems = [
   { id: "projects", label: "Projects", icon: FolderOpen },
   { id: "events", label: "Events", icon: Calendar },
   { id: "products", label: "Products", icon: ShoppingCart },
+  { id: "orders", label: "Orders", icon: ShoppingCart }, // Add Orders tab
 ];
 
 const DashboardNav = ({ activeTab, onTabChange }) => {

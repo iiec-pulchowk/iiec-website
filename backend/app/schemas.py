@@ -146,6 +146,7 @@ class OrderHistoryBase(BaseModel):
     full_name: str
     email: str
     contact: str
+    product_title: str  # ADDED
     quantity: int  # Total quantity of items
     total_amount: float  # Represents 'total'
 
@@ -158,6 +159,7 @@ class OrderHistoryUpdate(BaseModel):
     full_name: Optional[str] = None
     email: Optional[str] = None
     contact: Optional[str] = None
+    product_title: Optional[str] = None  # ADDED
     quantity: Optional[int] = None
     total_amount: Optional[float] = None
 

@@ -84,9 +84,11 @@ class OrderHistory(BaseHistory):
     full_name = Column(String, nullable=False)
     email = Column(String, nullable=False, index=True)
     contact = Column(String, nullable=False)
+    # ADDED: Title of the product ordered
+    product_title = Column(String, nullable=False)
+    # Total quantity of items in the order
     quantity = Column(Integer, nullable=False)
     total_amount = Column(Float, nullable=False)  # This will serve as total
     order_date = Column(DateTime(timezone=True), server_default=func.now())
-
     def __repr__(self):
-        return f"<OrderHistory(id={self.id}, email='{self.email}')>"
+        return f"<OrderHistory(id={self.id}, email='{self.email}', product='{self.product_title}')>"
