@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Any, Dict
 
 
 class UserBase(BaseModel):
@@ -136,6 +136,35 @@ class Event(EventBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+# Schemas for OrderHistory
+class OrderHistoryBase(BaseModel):
+    full_name: str
+    email: str
+    contact: str
+    quantity: int  # Total quantity of items
+    total_amount: float  # Represents 'total'
+
+
+class OrderHistoryCreate(OrderHistoryBase):
+    pass
+
+
+class OrderHistoryUpdate(BaseModel):
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    contact: Optional[str] = None
+    quantity: Optional[int] = None
+    total_amount: Optional[float] = None
+
+
+class OrderHistory(OrderHistoryBase):
+    id: int  # Represents 'order_id'
+    order_date: datetime
 
     class Config:
         from_attributes = True
