@@ -14,6 +14,7 @@ const AdminDashboard = () => {
   const [notices, setNotices] = useState([]);
   const [products, setProducts] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [orders, setOrders] = useState([]); // Add state for orders
   const [editingItem, setEditingItem] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -120,6 +121,22 @@ const AdminDashboard = () => {
               err
             );
             setProducts([]);
+          }
+          break;
+        case "orders": // Add case for orders
+          try {
+            response = await fetch(`${API_BASE}/orders`);
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            // Assuming backend returns data in the correct format for OrderHistory schema
+            // No transformation needed if frontend schema matches backend response
+            setOrders(data);
+          } catch (err) {
+            console.error("Orders API not available, using empty array:", err);
+            setError(`Failed to fetch orders. ${err.message}`);
+            setOrders([]);
           }
           break;
       }
@@ -340,6 +357,45 @@ const AdminDashboard = () => {
             }
           }
           break;
+        case "orders": // Add case for orders
+          url = editingItem
+            ? `${API_BASE}/orders/${editingItem.id}`
+            : `${API_BASE}/orders/`;
+
+          // itemData should already match OrderHistoryCreate or OrderHistoryUpdate schema
+          // No specific transformation needed here if ItemForm sends correct data
+          // Ensure quantity and total_amount are numbers if they come as strings from form
+          if (itemData.quantity)
+            itemData.quantity = parseInt(itemData.quantity, 10);
+          if (itemData.total_amount)
+            itemData.total_amount = parseFloat(itemData.total_amount);
+
+          try {
+            response = await fetch(url, {
+              method: method,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(itemData),
+            });
+            if (!response.ok) {
+              const errorBody = await response.text();
+              throw new Error(
+                `HTTP error! status: ${response.status}, body: ${errorBody}`
+              );
+            }
+            const savedItem = await response.json();
+            if (editingItem) {
+              setOrders((prev) =>
+                prev.map((o) => (o.id === editingItem.id ? savedItem : o))
+              );
+            } else {
+              setOrders((prev) => [...prev, savedItem]);
+            }
+          } catch (err) {
+            console.error("Orders API call failed:", err);
+            setError(`Failed to save order (API error): ${err.message}.`);
+            // Optionally, add mock behavior for fallback if needed
+          }
+          break;
       }
 
       setShowForm(false);
@@ -411,6 +467,26 @@ const AdminDashboard = () => {
             setProducts((prev) => prev.filter((p) => p.id !== id));
           }
           break;
+        case "orders": // Add case for orders
+          try {
+            const response = await fetch(`${API_BASE}/orders/${id}`, {
+              method: "DELETE",
+            });
+            if (!response.ok) {
+              // For DELETE, a 204 No Content is also a success
+              if (response.status !== 204) {
+                const errorBody = await response.text();
+                throw new Error(
+                  `HTTP error! status: ${response.status}, body: ${errorBody}`
+                );
+              }
+            }
+            setOrders((prev) => prev.filter((o) => o.id !== id));
+          } catch (err) {
+            console.error("Orders API delete call failed:", err);
+            setError(`Failed to delete order (API error): ${err.message}.`);
+          }
+          break;
       }
     } catch (error) {
       console.error("Error deleting item:", error);
@@ -426,6 +502,13 @@ const AdminDashboard = () => {
   };
 
   const handleAddNew = () => {
+    // Prevent adding new orders directly from admin dashboard
+    if (activeTab === "orders") {
+      setError(
+        "New orders are created through the customer store, not the admin panel."
+      );
+      return;
+    }
     setEditingItem(null); // Ensure we're not editing when adding new
     setShowForm(true);
   };
@@ -617,6 +700,8 @@ const AdminDashboard = () => {
         return notices;
       case "products":
         return products;
+      case "orders": // Add case for orders
+        return orders;
       default:
         return [];
     }
@@ -625,7 +710,11 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <DashboardHeader error={error} onAddNew={handleAddNew} />
+      <DashboardHeader
+        error={error}
+        onAddNew={handleAddNew}
+        activeTab={activeTab} // Pass activeTab to DashboardHeader
+      />
 
       {/* Navigation Tabs */}
       <DashboardNav activeTab={activeTab} onTabChange={setActiveTab} />

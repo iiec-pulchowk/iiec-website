@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session, selectinload
+from typing import Optional, List  # Added Optional and List
 from . import models, schemas
 
 
@@ -207,3 +208,48 @@ def delete_event(db: Session, event_id: int):
         db.delete(db_event)
         db.commit()
     return db_event
+
+
+# OrderHistory CRUD operations (using the history database)
+def create_order_history(db: Session, order: schemas.OrderHistoryCreate) -> models.OrderHistory:
+    db_order = models.OrderHistory(
+        full_name=order.full_name,
+        email=order.email,
+        contact=order.contact,
+        product_title=order.product_title,  # ADDED
+        quantity=order.quantity,
+        total_amount=order.total_amount
+    )
+    db.add(db_order)
+    db.commit()
+    db.refresh(db_order)
+    return db_order
+
+
+def get_order_history(db: Session, order_id: int) -> Optional[models.OrderHistory]:
+    return db.query(models.OrderHistory).filter(models.OrderHistory.id == order_id).first()
+
+
+def get_orders_history(db: Session, skip: int = 0, limit: int = 100) -> List[models.OrderHistory]:
+    return db.query(models.OrderHistory).order_by(models.OrderHistory.order_date.desc()).offset(skip).limit(limit).all()
+
+
+def update_order_history(db: Session, order_id: int, order_update: schemas.OrderHistoryUpdate) -> Optional[models.OrderHistory]:
+    db_order = db.query(models.OrderHistory).filter(
+        models.OrderHistory.id == order_id).first()
+    if db_order:
+        update_data = order_update.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(db_order, key, value)
+        db.commit()
+        db.refresh(db_order)
+    return db_order
+
+
+def delete_order_history(db: Session, order_id: int) -> Optional[models.OrderHistory]:
+    db_order = db.query(models.OrderHistory).filter(
+        models.OrderHistory.id == order_id).first()
+    if db_order:
+        db.delete(db_order)
+        db.commit()
+    return db_order
