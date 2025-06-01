@@ -1,19 +1,22 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy.orm import Session
+from typing import List
+import jwt
+from datetime import datetime, timedelta
+import os
 from .database import engine, engine_history  # Import engine_history
 from . import models
 from .routers import users, products, projects, events, orders  # Import orders router
 
 
 app = FastAPI(title="IIEC API", version="1.0.0")
-
-
 @app.on_event("startup")
 def on_startup():
     # models.Base.metadata.drop_all(bind=engine) # For primary DB
     models.Base.metadata.create_all(bind=engine)  # For primary DB
-    models.BaseHistory.metadata.drop_all(bind = engine_history)
+    # models.BaseHistory.metadata.drop_all(bind = engine_history)
     # models.BaseHistory.metadata.drop_all(bind=engine_history) # For history DB
     models.BaseHistory.metadata.create_all(
         bind=engine_history)  # For history DB
