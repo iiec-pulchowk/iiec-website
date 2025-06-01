@@ -12,20 +12,11 @@ export default function Modal({
   setQuantity,
   formData,
   handleInputChange,
-  setProductData,
   handleSubmit,
   isSubmitting,
   orderSuccess,
 }) {
   const totalPrice = (product.price * quantity).toFixed(2);
-
-  useEffect(() => {
-    setProductData({
-      name: product.name,
-      image: product.image,
-      price: product.price,
-    });
-  }, []);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

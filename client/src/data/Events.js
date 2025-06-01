@@ -3,14 +3,13 @@
 // export const events = [ ... ]; // Remove static data
 import { useState, useEffect } from "react"; // Added missing import
 
-// const API_BASE_URL = "http://localhost:8080"; // Adjust if your backend URL is different
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl  = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 // API service for events
 export const eventsAPI = {
   getEvents: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/events`);
+      const response = await fetch(`${apiUrl }/events`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

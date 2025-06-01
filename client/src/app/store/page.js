@@ -9,7 +9,7 @@ import ProductCard from "@/components/store/ProductCard";
 import Link from "next/link";
 import emailjs from "@emailjs/browser";
 
-const API_BASE = "http://localhost:8080"; // Define API_BASE for backend calls
+const apiUrl  = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 export default function Store() {
   // Use the custom hook for products data
@@ -25,11 +25,6 @@ export default function Store() {
     name: "",
     email: "",
     phone: "",
-  });
-  const [productData, setProductData] = useState({
-    name: "",
-    image: "",
-    price: "",
   });
 
   const openModal = (product) => {
@@ -63,15 +58,14 @@ export default function Store() {
       full_name: formData.name,
       email: formData.email,
       contact: formData.phone,
-      product_title: selectedProduct.name, // Assuming selectedProduct holds the product being ordered
+      product_title: selectedProduct.name,
       quantity: quantity,
       total_amount: parseFloat((selectedProduct.price * quantity).toFixed(2)),
-      // user_id can be added if you have user authentication and want to link orders
     };
 
     try {
       // 1. Send order to backend
-      const response = await fetch(`${API_BASE}/orders`, {
+      const response = await fetch(`${apiUrl }/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -121,11 +115,6 @@ export default function Store() {
         orderPayload
       );
       setFormData({ name: "", email: "", phone: "" });
-      setProductData({
-        name: "",
-        image: "",
-        price: "",
-      });
     } catch (error) {
       console.error("Order submission failed:", error);
       setSubmitError(
@@ -283,7 +272,6 @@ export default function Store() {
           setQuantity={setQuantity}
           formData={formData}
           handleInputChange={handleInputChange}
-          setProductData={setProductData} // This might be removable if selectedProduct is primary source
           handleSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           orderSuccess={orderSuccess}

@@ -1,15 +1,14 @@
 // products.js - Replace your hardcoded products with API integration
 
 // API configuration
-// const API_BASE_URL = "http://localhost:8080";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl  = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 // API service for products
 export const productsAPI = {
   // Get all products
   getProducts: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/products`);
+      const response = await fetch(`${apiUrl }/products`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -24,7 +23,7 @@ export const productsAPI = {
   // Get single product by ID
   getProduct: async (id) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/products/${id}`);
+      const response = await fetch(`${apiUrl }/products/${id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -102,7 +101,7 @@ export const getProducts = async () => {
       name: product.name,
       description: product.description,
       price: product.price,
-      image: product.image ? `${API_BASE_URL}/uploads/${product.image}` : null,
+      image: product.image ? `${apiUrl }/uploads/${product.image}` : null,
       inStock: product.in_stock,
       stock: product.stock,
       category: product.category,
