@@ -8,7 +8,6 @@ import Modal from "@/components/Modal/PurchaseModal";
 import ProductCard from "@/components/store/ProductCard";
 import Link from "next/link";
 import emailjs from "@emailjs/browser";
-import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const API_BASE = "http://localhost:8080"; // Define API_BASE for backend calls
 
