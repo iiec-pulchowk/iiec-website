@@ -54,30 +54,34 @@ export const communityOrganizations = [
   },
   {
     id: 3,
-    name: "DBF",
-    description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna. Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci. Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
-    projects: [
-      {
-        name: "Project 1",
-        description:
-          "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
-      },
-    ],
-    image: "/community/dbf.png",
-    imageAlt: "Design Build Fly team with their aeroplane prototype",
-    url: "#",
-  },
-  {
-    id: 3,
     name: "Flying Club",
     description:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna. Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci. Aenean nec lorem. In porttitor. Donec laoreet nonummy augue. Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.",
+      "Flying Club Pulchowk is a vibrant community of aerospace enthusiasts dedicated to exploring UAV technology and aeromodelling through hands-on projects, competitions, and outreach initiatives.",
+    details: [
+      "RC Plane: Initiated our journey into flight control, aerodynamics, and propulsion.",
+      "Autonomous Medical UAV: Fixed-wing drone for secure medical delivery using parachute system.",
+      "Aerial Mapping UAS: Designed to monitor PM2.5 and PM10 levels via drone-based mapping.",
+      "Blended Wing VTOL: Experimental BWB UAS integrating VTOL capabilities.",
+      "Thermal Drone: Equipped for night ops and heat signature detection.",
+      "Autonomous Drone: Pixhawk 6X-based UAV with GPS waypoint navigation.",
+      "Rubber Powered Glider: Educational glider to demonstrate flight principles.",
+      "Tricopter VTOL: Combines vertical lift with efficient cruise flight.",
+    ],
     projects: [
       {
-        name: "Project 1",
+        name: "DBF Competition",
         description:
-          "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+          "Secured 38th position at the AIAA DBF 2025 competition among 130+ international teams with a custom-built RC aircraft.",
+      },
+      {
+        name: "National Aeromodelling Competition",
+        description:
+          "Achieved 16th position at IIT Bombay zonals with precision payload RC aircraft.",
+      },
+      {
+        name: "Workshops and Outreach",
+        description:
+          "Conducted hands-on workshops on XFLR5, RC planes, drone piloting, and UAVs; inspired students via school outreach and APF drone show.",
       },
     ],
     image: "/community/flying_club.png",
