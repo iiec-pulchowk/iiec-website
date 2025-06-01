@@ -9,9 +9,20 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
+class UserResponse(UserBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
 
+class UserLogin(BaseModel):
+    email: str
+    password: str
+    
 class User(UserBase):
     id: int
     created_at: datetime
@@ -141,7 +152,6 @@ class Event(EventBase):
         from_attributes = True
 
 
-# Schemas for OrderHistory
 class OrderHistoryBase(BaseModel):
     full_name: str
     email: str
@@ -170,3 +180,12 @@ class OrderHistory(OrderHistoryBase):
 
     class Config:
         from_attributes = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserResponse
+
+class TokenData(BaseModel):
+    email: Optional[str] = None

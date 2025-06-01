@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Head from "next/head";
 
 // Import modular components
 import DashboardHeader from "../../../components/admin/dashboard/DashboardHeader";
@@ -9,7 +11,92 @@ import ItemForm from "../../../components/admin/dashboard/ItemForm";
 import ProjectSectionForm from "../../../components/admin/dashboard/ProjectSectionForm";
 import ConfirmationModal from "../../../components/admin/dashboard/ConfirmationModal"; // Import the new modal
 
+// Loading component
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+      <p className="text-gray-600">Verifying authentication...</p>
+    </div>
+  </div>
+);
+
+// Login form component
+const LoginForm = ({ onLogin, loading, error }) => {
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onLogin(credentials);
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Admin Login
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Please sign in to access the admin dashboard
+          </p>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              {error}
+            </div>
+          )}
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <input
+                type="email"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+                value={credentials.email}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, email: e.target.value })
+                }
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+                value={credentials.password}
+                onChange={(e) =>
+                  setCredentials({ ...credentials, password: e.target.value })
+                }
+              />
+            </div>
+          </div>
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const AdminDashboard = () => {
+  // Authentication states
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  // Existing dashboard states
   const [activeTab, setActiveTab] = useState("projects");
   const [events, setEvents] = useState([]);
   const [notices, setNotices] = useState([]);
@@ -25,13 +112,127 @@ const AdminDashboard = () => {
   const [editingSection, setEditingSection] = useState(null);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
+  const router = useRouter();
+
   // State for confirmation modal
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null); // { id, type, itemDescription }
 
-
   // Update API URL to match your FastAPI backend
   const API_BASE = "http://localhost:8080";
+
+  // Authentication functions
+  const getStoredToken = () => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("admin_token");
+    }
+    return null;
+  };
+
+  const setStoredToken = (token) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("admin_token", token);
+    }
+  };
+
+  const removeStoredToken = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("admin_token");
+    }
+  };
+
+  const verifyToken = async (token) => {
+    try {
+      const response = await fetch(`${API_BASE}/users/verify`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Token verification failed");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Token verification error:", error);
+      throw error;
+    }
+  };
+
+  const handleLogin = async (credentials) => {
+    setLoginLoading(true);
+    setAuthError(null);
+
+    try {
+      const response = await fetch(`${API_BASE}/users/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Login failed");
+      }
+
+      const data = await response.json();
+
+      // Store token
+      setStoredToken(data.access_token);
+
+      // Set user data
+      setUser(data.user);
+      setIsAuthenticated(true);
+      setAuthError(null);
+    } catch (error) {
+      console.error("Login error:", error);
+      setAuthError(error.message);
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    removeStoredToken();
+    setIsAuthenticated(false);
+    setUser(null);
+    router.push("/");
+  };
+
+  // Check authentication on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      setIsLoading(true);
+      const token = getStoredToken();
+
+      if (!token) {
+        setIsAuthenticated(false);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const userData = await verifyToken(token);
+        setUser(userData.user);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        removeStoredToken();
+        setIsAuthenticated(false);
+        setAuthError("Session expired. Please login again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   // Function to calculate status, can be moved to a utility file if used elsewhere
   const getEventStatus = (eventDateStr) => {
@@ -44,26 +245,35 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
-    // Reset form states when tab changes
-    setEditingItem(null);
-    setShowForm(false);
-    setEditingSection(null);
-    setShowSectionForm(false);
-    setSelectedProjectId(null);
+    if (isAuthenticated) {
+      // Reset form states when tab changes
+      setEditingItem(null);
+      setShowForm(false);
+      setEditingSection(null);
+      setShowSectionForm(false);
+      setSelectedProjectId(null);
+      fetchData();
+    }
+  }, [activeTab, isAuthenticated]);
 
-    fetchData();
-  }, [activeTab]); // Add fetchData to dependency array if it's not already, ensure it's memoized with useCallback
-
-  // Fetch data based on active tab
   const fetchData = useCallback(async () => {
+    if (!isAuthenticated) return;
+
     setLoading(true);
     setError(null);
+    const token = getStoredToken();
+
     try {
       let response;
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      };
+
       switch (activeTab) {
         case "projects":
           try {
-            response = await fetch(`${API_BASE}/projects`);
+            response = await fetch(`${API_BASE}/projects`, { headers });
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -88,7 +298,7 @@ const AdminDashboard = () => {
           break;
         case "events":
           try {
-            response = await fetch(`${API_BASE}/events`);
+            response = await fetch(`${API_BASE}/events`, { headers });
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -100,17 +310,12 @@ const AdminDashboard = () => {
             setEvents(transformedData);
           } catch (err) {
             console.error("Events API not available, using mock data:", err);
-            setEvents(
-              mockEventsData.map((event) => ({
-                ...event,
-                status: getEventStatus(event.date),
-              }))
-            );
+            setEvents([]);
           }
           break;
         case "products":
           try {
-            response = await fetch(`${API_BASE}/products`);
+            response = await fetch(`${API_BASE}/products`, { headers });
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -149,10 +354,40 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error("Error fetching data:", err);
       setError(`Failed to fetch ${activeTab}. ${err.message}`);
+
+      // Check if it's an auth error
+      if (err.message.includes("401") || err.message.includes("unauthorized")) {
+        handleLogout();
+      }
     } finally {
       setLoading(false);
     }
-  }, [activeTab, API_BASE]); // Removed getEventStatus from here, it's defined in component scope
+  }, [activeTab, isAuthenticated]);
+
+  const makeAuthenticatedRequest = async (url, options = {}) => {
+    const token = getStoredToken();
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      ...options.headers,
+    };
+
+    try {
+      const response = await fetch(url, { ...options, headers });
+
+      if (response.status === 401) {
+        handleLogout();
+        throw new Error("Authentication failed");
+      }
+
+      return response;
+    } catch (error) {
+      if (error.message === "Authentication failed") {
+        throw error;
+      }
+      throw new Error(`Request failed: ${error.message}`);
+    }
+  };
 
   const handleSave = async (item, type) => {
     setLoading(true);
@@ -171,7 +406,6 @@ const AdminDashboard = () => {
 
           // Transform frontend data to match backend structure
           const projectPayload = {
-            // Renamed to avoid conflict with projectData in outer scope
             ...item,
             main_image_url: item.mainImageUrl || null,
           };
@@ -181,12 +415,9 @@ const AdminDashboard = () => {
           delete projectPayload.updatedAt;
 
           try {
-            response = await fetch(url, {
+            response = await makeAuthenticatedRequest(url, {
               method: method,
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(projectPayload), // Use renamed payload
+              body: JSON.stringify(projectPayload),
             });
 
             if (!response.ok) {
@@ -194,15 +425,11 @@ const AdminDashboard = () => {
             }
 
             const savedItem = await response.json();
-            // When a project is saved, its sections should ideally be re-fetched or updated if the backend returns them.
-            // For now, we preserve existing sections on the frontend or rely on a full re-fetch if needed.
-            // The backend GET /projects/{id} should return sections if properly configured.
             const transformedItem = {
               ...savedItem,
               mainImageUrl: savedItem.main_image_url || null,
               createdAt: savedItem.created_at,
               updatedAt: savedItem.updated_at,
-              // If backend sends sections with project after save, map them here too
               sections: (savedItem.sections || editingItem?.sections || []).map(
                 (sec) => ({
                   ...sec,
@@ -219,6 +446,9 @@ const AdminDashboard = () => {
               setProjects((prev) => [...prev, transformedItem]);
             }
           } catch (err) {
+            if (err.message === "Authentication failed") {
+              return;
+            }
             console.error("API call failed, using mock behavior:", err);
             if (editingItem) {
               const updatedItem = {
@@ -253,11 +483,11 @@ const AdminDashboard = () => {
           }
 
           try {
-            response = await fetch(url, {
+            response = await makeAuthenticatedRequest(url, {
               method: method,
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(itemData), // itemData now excludes status
+              body: JSON.stringify(itemData),
             });
+
             if (!response.ok) {
               const errorBody = await response.text();
               throw new Error(
@@ -278,6 +508,9 @@ const AdminDashboard = () => {
               setEvents((prev) => [...prev, savedItem]);
             }
           } catch (err) {
+            if (err.message === "Authentication failed") {
+              return;
+            }
             console.error("Events API call failed, using mock behavior:", err);
             setError(
               `Failed to save event (API error): ${err.message}. Using mock behavior.`
@@ -315,11 +548,8 @@ const AdminDashboard = () => {
           delete productData.imageUrl;
 
           try {
-            response = await fetch(url, {
+            response = await makeAuthenticatedRequest(url, {
               method: method,
-              headers: {
-                "Content-Type": "application/json",
-              },
               body: JSON.stringify(productData),
             });
 
@@ -343,6 +573,9 @@ const AdminDashboard = () => {
               setProducts((prev) => [...prev, transformedItem]);
             }
           } catch (err) {
+            if (err.message === "Authentication failed") {
+              return;
+            }
             console.error("API call failed, using mock behavior:", err);
             if (editingItem) {
               const updatedItem = {
@@ -407,6 +640,9 @@ const AdminDashboard = () => {
       setShowForm(false);
       setEditingItem(null);
     } catch (error) {
+      if (error.message === "Authentication failed") {
+        return;
+      }
       console.error("Error saving item:", error);
       setError(`Failed to save ${type.slice(0, -1)}. ${error.message}`);
     } finally {
@@ -414,11 +650,128 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDelete = async (id, type) => {
+    if (!confirm("Are you sure you want to delete this item?")) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      switch (type) {
+        case "projects":
+          try {
+            const response = await makeAuthenticatedRequest(
+              `${API_BASE}/projects/${id}`,
+              {
+                method: "DELETE",
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            setProjects((prev) => prev.filter((p) => p.id !== id));
+          } catch (err) {
+            if (err.message === "Authentication failed") {
+              return;
+            }
+            console.error("API call failed, using mock behavior:", err);
+            setError(`Failed to delete project: ${err.message}.`); // Set error for display
+            // setProjects((prev) => prev.filter((p) => p.id !== id)); // Optional: optimistic update on error
+          }
+          break;
+        case "events":
+          try {
+            const response = await makeAuthenticatedRequest(
+              `${API_BASE}/events/${id}`,
+              {
+                method: "DELETE",
+              }
+            );
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            setEvents((prev) => prev.filter((e) => e.id !== id));
+          } catch (err) {
+            if (err.message === "Authentication failed") {
+              return;
+            }
+            console.error(
+              "Events API delete call failed, using mock behavior:",
+              err
+            );
+            setError(`Failed to delete event: ${err.message}.`);
+            // setEvents((prev) => prev.filter((e) => e.id !== id)); // Mock delete
+          }
+          break;
+        case "products":
+          try {
+            const response = await makeAuthenticatedRequest(
+              `${API_BASE}/products/${id}`,
+              {
+                method: "DELETE",
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            setProducts((prev) => prev.filter((p) => p.id !== id));
+          } catch (err) {
+            if (err.message === "Authentication failed") {
+              return;
+            }
+            console.error("API call failed, using mock behavior:", err);
+            setError(`Failed to delete product: ${err.message}.`);
+            // setProducts((prev) => prev.filter((p) => p.id !== id));
+          }
+          break;
+        case "orders": // Add case for orders
+          try {
+            const response = await fetch(`${API_BASE}/orders/${id}`, {
+              method: "DELETE",
+            });
+            if (!response.ok) {
+              // For DELETE, a 204 No Content is also a success
+              if (response.status !== 204) {
+                const errorBody = await response.text();
+                throw new Error(
+                  `HTTP error! status: ${response.status}, body: ${errorBody}`
+                );
+              }
+            }
+            setOrders((prev) => prev.filter((o) => o.id !== id));
+          } catch (err) {
+            console.error("Orders API delete call failed:", err);
+            setError(`Failed to delete order: ${err.message}.`);
+          }
+          break;
+      }
+    } catch (error) {
+      // This catch is for unexpected errors in the switch logic itself
+      console.error("Error deleting item:", error);
+      setError(
+        `Failed to delete ${type ? type.slice(0, -1) : "item"}. ${
+          error.message
+        }`
+      );
+    } finally {
+      // setLoading(false); // Modal handles its own loading state for the confirm button
+      setShowConfirmationModal(false);
+      setItemToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmationModal(false);
+    setItemToDelete(null);
+  };
   const handleDeleteRequest = (id, type) => {
     // Find the item to get a description for the modal, if needed
     let itemDescription = `item with ID ${id}`;
     const currentData = getCurrentData();
-    const item = currentData.find(i => i.id === id);
+    const item = currentData.find((i) => i.id === id);
     if (item) {
       itemDescription = item.name || item.title || `ID ${id}`;
     }
@@ -426,7 +779,6 @@ const AdminDashboard = () => {
     setItemToDelete({ id, type, itemDescription });
     setShowConfirmationModal(true);
   };
-
   const handleConfirmDelete = async () => {
     if (!itemToDelete) return;
 
@@ -468,9 +820,7 @@ const AdminDashboard = () => {
               "Events API delete call failed, using mock behavior:",
               err
             );
-            setError(
-              `Failed to delete event: ${err.message}.`
-            );
+            setError(`Failed to delete event: ${err.message}.`);
             // setEvents((prev) => prev.filter((e) => e.id !== id)); // Mock delete
           }
           break;
@@ -512,38 +862,42 @@ const AdminDashboard = () => {
           }
           break;
       }
-    } catch (error) { // This catch is for unexpected errors in the switch logic itself
+    } catch (error) {
+      // This catch is for unexpected errors in the switch logic itself
       console.error("Error deleting item:", error);
-      setError(`Failed to delete ${type ? type.slice(0, -1) : 'item'}. ${error.message}`);
+      setError(
+        `Failed to delete ${type ? type.slice(0, -1) : "item"}. ${
+          error.message
+        }`
+      );
     } finally {
       // setLoading(false); // Modal handles its own loading state for the confirm button
       setShowConfirmationModal(false);
       setItemToDelete(null);
     }
   };
-  
-  const handleCancelDelete = () => {
-    setShowConfirmationModal(false);
-    setItemToDelete(null);
-  };
-
 
   const handleDeleteSectionRequest = (sectionId, projectId) => {
-     // Find the section to get a description for the modal
-    const project = projects.find(p => p.id === projectId);
+    // Find the section to get a description for the modal
+    const project = projects.find((p) => p.id === projectId);
     let itemDescription = `section with ID ${sectionId}`;
     if (project && project.sections) {
-        const section = project.sections.find(s => s.id === sectionId);
-        if (section) {
-            itemDescription = section.title || `ID ${sectionId}`;
-        }
+      const section = project.sections.find((s) => s.id === sectionId);
+      if (section) {
+        itemDescription = section.title || `ID ${sectionId}`;
+      }
     }
-    setItemToDelete({ id: sectionId, type: 'projectSection', projectId, itemDescription }); // Use a distinct type
+    setItemToDelete({
+      id: sectionId,
+      type: "projectSection",
+      projectId,
+      itemDescription,
+    }); // Use a distinct type
     setShowConfirmationModal(true);
   };
 
   const handleConfirmDeleteSection = async () => {
-    if (!itemToDelete || itemToDelete.type !== 'projectSection') return;
+    if (!itemToDelete || itemToDelete.type !== "projectSection") return;
     const { id: sectionId, projectId } = itemToDelete;
 
     // setLoading(true); // Modal handles its own loading state
@@ -554,10 +908,10 @@ const AdminDashboard = () => {
       const response = await fetch(url, { method: "DELETE" });
 
       if (!response.ok && response.status !== 204) {
-         const errorBody = await response.text();
-         throw new Error(`HTTP error! status: ${response.status}. ${errorBody}`);
+        const errorBody = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}. ${errorBody}`);
       }
-      
+
       setProjects((prev) =>
         prev.map((project) => {
           if (project.id === projectId) {
@@ -571,7 +925,6 @@ const AdminDashboard = () => {
           return project;
         })
       );
-
     } catch (error) {
       console.error("Error deleting section:", error);
       setError(`Failed to delete section. ${error.message}`);
@@ -581,7 +934,6 @@ const AdminDashboard = () => {
       setItemToDelete(null);
     }
   };
-
 
   const handleEdit = (item, type) => {
     setEditingItem(item);
@@ -643,11 +995,8 @@ const AdminDashboard = () => {
       }
 
       try {
-        const response = await fetch(url, {
+        const response = await makeAuthenticatedRequest(url, {
           method: method,
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify(apiData),
         });
 
@@ -682,6 +1031,9 @@ const AdminDashboard = () => {
           })
         );
       } catch (err) {
+        if (err.message === "Authentication failed") {
+          return;
+        }
         console.error("API call failed, using mock behavior:", err);
         // Fallback to mock behavior
         const newSection = {
@@ -711,6 +1063,9 @@ const AdminDashboard = () => {
       setEditingSection(null);
       setSelectedProjectId(null);
     } catch (error) {
+      if (error.message === "Authentication failed") {
+        return;
+      }
       console.error("Error saving section:", error);
       setError(`Failed to save section. ${error.message}`);
     } finally {
@@ -726,8 +1081,7 @@ const AdminDashboard = () => {
     try {
       const url = `${API_BASE}/projects/sections/${sectionId}`; // Corrected URL
       try {
-        const response = await fetch(url, {
-          // Use corrected URL
+        const response = await makeAuthenticatedRequest(url, {
           method: "DELETE",
         });
 
@@ -735,6 +1089,9 @@ const AdminDashboard = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       } catch (err) {
+        if (err.message === "Authentication failed") {
+          return;
+        }
         console.error(
           "API call failed for delete section, using mock behavior:",
           err
@@ -758,6 +1115,9 @@ const AdminDashboard = () => {
         })
       );
     } catch (error) {
+      if (error.message === "Authentication failed") {
+        return;
+      }
       console.error("Error deleting section:", error);
       setError(`Failed to delete section. ${error.message}`);
     } finally {
@@ -794,6 +1154,23 @@ const AdminDashboard = () => {
     }
   };
 
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  // Show login form if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <LoginForm
+        onLogin={handleLogin}
+        loading={loginLoading}
+        error={authError}
+      />
+    );
+  }
+
+  // Show dashboard if authenticated
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -846,9 +1223,19 @@ const AdminDashboard = () => {
       <ConfirmationModal
         isOpen={showConfirmationModal}
         onClose={handleCancelDelete}
-        onConfirm={itemToDelete?.type === 'projectSection' ? handleConfirmDeleteSection : handleConfirmDelete}
-        title={itemToDelete?.type === 'projectSection' ? "Delete Project Section" : "Delete Item"}
-        message={`Are you sure you want to delete "${itemToDelete?.itemDescription || 'this item'}"? This action cannot be undone.`}
+        onConfirm={
+          itemToDelete?.type === "projectSection"
+            ? handleConfirmDeleteSection
+            : handleConfirmDelete
+        }
+        title={
+          itemToDelete?.type === "projectSection"
+            ? "Delete Project Section"
+            : "Delete Item"
+        }
+        message={`Are you sure you want to delete "${
+          itemToDelete?.itemDescription || "this item"
+        }"? This action cannot be undone.`}
         loading={loading} // Pass the main loading state to the modal for its button
       />
     </div>
