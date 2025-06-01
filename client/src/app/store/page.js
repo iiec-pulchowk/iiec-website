@@ -7,6 +7,7 @@ import { useProducts } from "@/data/Products"; // Updated import to use the hook
 import Modal from "@/components/Modal/PurchaseModal";
 import ProductCard from "@/components/store/ProductCard";
 import Link from "next/link";
+import emailjs from "@emailjs/browser";
 
 export default function Store() {
   // Use the custom hook for products data
@@ -20,6 +21,11 @@ export default function Store() {
     name: "",
     email: "",
     phone: "",
+  });
+  const [productData, setProductData] = useState({
+    name: "",
+    image: "",
+    price: "",
   });
 
   const openModal = (product) => {
@@ -43,8 +49,54 @@ export default function Store() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setOrderSuccess(true);
-    // Send this data to backend
+    //  TODO: handle these data at backend also
+
+    // EmailJS template parameters
+    const templateParams = {
+      customer_name: formData.name,
+      customer_email: formData.email,
+      customer_phone: formData.phone,
+      product_name: productData.name,
+      product_image: productData.image,
+      quantity: quantity,
+      unit_price: productData.price,
+      total_price: (productData.price * quantity).toFixed(2),
+      order_date: new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      current_timestamp: new Date().toLocaleString(),
+    };
+
+    // Send email via EmailJS
+    emailjs
+      .send(
+        "service_3eiujct",
+        "template_dtv6sqp",
+        templateParams,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+      )
+      .then(() => {
+        setOrderSuccess(true);
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+        });
+        setProductData({
+          name: "",
+          image: "",
+          price: "",
+        });
+        console.log("New order service added: ", templateParams);
+      })
+      .catch((error) => {
+        console.error("Email failed to send:", error);
+        // Handle error appropriately
+      });
   };
 
   // Loading state
@@ -193,6 +245,7 @@ export default function Store() {
           setQuantity={setQuantity}
           formData={formData}
           handleInputChange={handleInputChange}
+          setProductData={setProductData}
           handleSubmit={handleSubmit}
           orderSuccess={orderSuccess}
         />
