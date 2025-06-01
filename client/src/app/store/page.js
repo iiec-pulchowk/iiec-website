@@ -32,7 +32,6 @@ export default function Store() {
     image: "",
     price: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const openModal = (product) => {
     setSelectedProduct(product);
@@ -54,17 +53,11 @@ export default function Store() {
   };
 
   const handleSubmit = async (e) => {
-<<<<<<< HEAD
-    e.preventDefault();
-    setIsSubmitting(true);
-    //  TODO: handle these data at backend also
-=======
     // Make handleSubmit async
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitError(null);
     setOrderSuccess(false);
->>>>>>> cf650a36651b62cb238aa60cf5f94c0a672317bd
 
     // Prepare order data for the backend
     const orderPayload = {
@@ -129,11 +122,11 @@ export default function Store() {
         orderPayload
       );
       setFormData({ name: "", email: "", phone: "" });
-        setProductData({
-          name: "",
-          image: "",
-          price: "",
-        });
+      setProductData({
+        name: "",
+        image: "",
+        price: "",
+      });
     } catch (error) {
       console.error("Order submission failed:", error);
       setSubmitError(
@@ -295,7 +288,6 @@ export default function Store() {
           handleSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           orderSuccess={orderSuccess}
-          isSubmitting={isSubmitting} // Pass submission state to modal
           submitError={submitError} // Pass submission error to modal
         />
       )}
