@@ -26,18 +26,19 @@ export const metadata = {
     "IOE",
     "Nepal",
     "Startups",
-    "Kamal Darlami",
   ],
 
   authors: [
-    { name: "Sandip Katel", url: "https://www.skatel.com.np/" },
+    { name: "Sandip Katel", url: "https://github.com/sandipkatel" },
+    { name: "Saphal Rimal", url: "https://github.com/saphalr" },
+    { name: "Sijan Joshi", url: "https://github.com/SijanJ" },
     {
       name: "Kamal Darlami",
       url: "https://sites.google.com/pcampus.edu.np/kamaldarlami/",
     },
   ],
   creator: "Kamal Darlami",
-  publisher: "IIEC Pulchowk Campus", // Added Campus for specificity
+  publisher: "Pulchowk Campus", 
 
   icons: {
     icon: "/logo.png",
