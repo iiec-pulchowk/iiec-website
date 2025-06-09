@@ -8,6 +8,7 @@ import Modal from "@/components/Modal/PurchaseModal";
 import ProductCard from "@/components/store/ProductCard";
 import Link from "next/link";
 import emailjs from "@emailjs/browser";
+import Loading from "@/app/store/loading"
 
 const apiUrl  = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
@@ -128,39 +129,7 @@ export default function Store() {
 
   // Loading state
   if (loading) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        {/* Hero Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-purple-50 to-blue-50">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  Startup Store
-                </h1>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Discover and support innovative products created by our
-                  startup community.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Loading State */}
-        <section className="container mx-auto p-4 my-8">
-          <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">
-            Featured Products
-          </h2>
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-            <span className="ml-4 text-lg text-gray-600">
-              Loading products...
-            </span>
-          </div>
-        </section>
-      </div>
-    );
+    < Loading />
   }
 
   // Error state
