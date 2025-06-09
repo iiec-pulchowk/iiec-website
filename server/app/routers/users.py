@@ -6,8 +6,8 @@ from typing import List
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from .. import crud, models, schemas
-from ..database import get_db
+from app import crud, models, schemas
+from app.database import get_db
 import logging
 
 # Set up logging

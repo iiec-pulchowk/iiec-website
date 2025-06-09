@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, selectinload
 from typing import Optional, List  # Added Optional and List
-from . import models, schemas
+from app import models, schemas
 from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
