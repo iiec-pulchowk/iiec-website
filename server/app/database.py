@@ -23,7 +23,7 @@ def get_db():
         db.close()
 
 
-def get_history_db():  # New dependency for history DB
+def get_product_db():  # New dependency for history DB
     db = SessionLocalHistory()
     try:
         yield db
