@@ -16,9 +16,14 @@ def on_startup():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://iiec.pcampus.edu.np",
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "https://iiecpulchowk.vercel.app"  # Add your frontend domains
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
