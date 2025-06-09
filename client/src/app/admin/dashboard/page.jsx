@@ -119,7 +119,7 @@ const AdminDashboard = () => {
   const [itemToDelete, setItemToDelete] = useState(null); // { id, type, itemDescription }
 
   // Update API URL to match your FastAPI backend
-  const API_BASE = "http://localhost:8080";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
   // Authentication functions
   const getStoredToken = () => {
